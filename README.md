@@ -1,4 +1,4 @@
-# DocuRAG AI
+# AssistFlow
 
 **Intelligent RAG-Powered Customer Support Platform with Document Intelligence & Automated Escalation**
 
@@ -14,7 +14,7 @@
 
 ## Overview
 
-**DocuRAG AI** is a production-grade, multi-tenant backend platform that lets businesses deploy sophisticated, document-grounded AI customer support chatbots on their websites in minutes.
+**AssistFlow** is a production-grade, multi-tenant backend platform that lets businesses deploy sophisticated, document-grounded AI customer support chatbots on their websites in minutes.
 
 It combines **Retrieval-Augmented Generation (RAG)**, intelligent intent detection, persistent conversation state management, and automated human escalation workflows into one secure, async-first system.
 
@@ -119,7 +119,7 @@ Enable companies to upload their knowledge base (product docs, code, policies, e
 ## Folder Structure
 
 ```bash
-docurag-ai/
+AssistFlow/
 ├── Security/
 │   ├── Advance_Logger.py          # Rich structured logger (console + rotating UTF-8 files)
 │   ├── get_secretes.py            # Doppler-first secret loader with graceful env fallback
@@ -175,8 +175,8 @@ docurag-ai/
 ## Steps (Linux / macOS / Windows WSL)
 ```
 # 1. Clone repository
-git clone https://github.com/your-org/docurag-ai.git
-cd docurag-ai
+git clone https://github.com/your-org/AssistFlow.git
+cd AssistFlow
 
 # 2. Create virtual environment
 python -m venv venv
@@ -198,8 +198,7 @@ pip install -r requirements.txt
 ## Environment Variables
 ```
 # === Core Infrastructure ===
-DATABASE_URL=postgresql://user:password@localhost:5432/docurag
-REDIS_HOST=redis://localhost:6379/0
+DATABASE_URL=postgresql://user:password@localhost:5432/AssistFlowDIS_HOST=redis://localhost:6379/0
 
 QDRANT_URL=https://your-qdrant-instance.qdrant.io
 QDRANT_API_KEY=your-qdrant-api-key
@@ -218,8 +217,7 @@ SUPPORT_EMAIL_PASSWORD=your-gmail-app-password
 
 # === Doppler (Production - overrides .env when present) ===
 DOPPLER_TOKEN=dp.st.xxxxxxxxxxxxxxxxxxxxxxxx
-DOPPLER_PROJECT=docurag
-DOPPLER_CONFIG=prod
+DOPPLER_PROJECT=AssistFlowPPLER_CONFIG=prod
 ```
 
 Running the Project
@@ -460,7 +458,7 @@ jobs:
 Usage Examples
 Embed Widget on Your Site
 HTML<script 
-  src="https://your-docurag-instance.com/widget.js" 
+  src="https://your-AssistFlowstance.com/widget.js" 
   data-client-token="550e8400-e29b-41d4-a716-446655440000">
 </script>
 Python Integration Example
@@ -557,11 +555,11 @@ This project is licensed under the MIT License — see the LICENSE file for deta
 You are free to use, modify, and distribute this software for personal and commercial purposes.
 
 Author & Contact
-DocuRAG AI was built to solve real-world customer support automation challenges with production-grade reliability.
+AssistFlow was built to solve real-world customer support automation challenges with production-grade reliability.
 For questions, feature requests, or enterprise support:
 
 Open an issue on GitHub
-Email: support@your-docurag-domain.com (replace with your instance)
+Email: support@your-AssistFlowmain.com (replace with your instance)
 
 Built with precision, performance, and practicality in mind.
 
