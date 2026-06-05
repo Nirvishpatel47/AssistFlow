@@ -153,6 +153,7 @@ docurag-ai/
 ├── Dockerfile (recommended)
 ├── docker-compose.yml (recommended)
 └── .env.example
+```
 ---
 
 ## Purpose of Major Folders
