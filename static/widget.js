@@ -7,7 +7,7 @@
   window.__CHAT_WIDGET_INITIALIZED__ = true;
 
   /* ---------- CONFIG ---------- */
-  const BACKEND_URL = "http://127.0.0.1:8000/chat";
+  const BACKEND_URL = "https://assistflow-eqkv.onrender.com/chat";
 
   const scriptTag = document.currentScript;
   const CLIENT_TOKEN = scriptTag.getAttribute("data-client");
