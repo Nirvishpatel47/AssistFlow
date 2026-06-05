@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart AI — Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgMain: '#0B1020',
+                        bgSurface: '#12182B',
+                        bgElevated: '#182033',
+                        borderColor: '#243047',
+                        accentColor: '#3BC9DB',
+                        accentSecondary: '#5B7CFA',
+                        textPrimary: '#F3F7FF',
+                        textSecondary: '#94A3B8',
+                        success: '#22C55E',
+                        error: '#EF4444'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'DM Sans', sans-serif; background-color: #0B1020; color: #F3F7FF; }
+        .nav-active { background-color: #182033; color: #3BC9DB; border-left: 3px solid #3BC9DB; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0B1020; }
+        ::-webkit-scrollbar-thumb { background: #243047; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex bg-bgMain overflow-x-hidden">
+
+    <div class="md:hidden fixed top-0 left-0 right-0 h-14 bg-bgSurface border-b border-borderColor flex items-center justify-between px-4 z-50">
+        <div class="flex items-center gap-2">
+            <div class="w-6 h-6 bg-gradient-to-br from-accentColor to-accentSecondary rounded flex items-center justify-center font-bold text-white text-xs">S</div>
+            <span class="text-sm font-bold tracking-tight">Smart AI</span>
+        </div>
+        <button id="mobileNavToggle" class="text-textSecondary p-1 text-sm font-medium">Menu</button>
+    </div>
+
+    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-bgSurface border-r border-borderColor flex flex-col z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out pt-14 md:pt-0">
+        <div class="p-6 hidden md:flex items-center gap-3 border-b border-borderColor">
+            <div class="w-8 h-8 bg-gradient-to-br from-accentColor to-accentSecondary rounded-lg flex items-center justify-center font-bold text-white text-sm">S</div>
+            <span class="text-base font-bold tracking-tight">Smart AI Panel</span>
+        </div>
+        
+        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
+            <button onclick="switchView('overview')" id="btn-overview" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition nav-active">
+                Overview
+            </button>
+            <button onclick="switchView('documents')" id="btn-documents" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition">
+                Data Ingestion
+            </button>
+            <button onclick="switchView('usage')" id="btn-usage" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition">
+                Usage Analytics
+            </button>
+            <button onclick="switchView('settings')" id="btn-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition">
+                Config & Systems
+            </button>
+        </nav>
+
+        <div class="p-4 border-t border-borderColor bg-bgMain/30">
+            <button id="logoutBtn" class="w-full bg-bgElevated hover:bg-error/10 hover:text-error text-textSecondary border border-borderColor rounded-lg py-2 text-xs font-semibold transition">
+                Sign Out
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 md:pl-64 pt-14 md:pt-0 min-h-screen flex flex-col overflow-x-hidden">
+        <div class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-8 space-y-6">
+
+            <section id="view-overview" class="space-y-6">
+                <header>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">System Status</h1>
+                    <p class="text-textSecondary text-xs md:text-sm">Quick onboarding metrics and connection scripts.</p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-bgSurface border border-borderColor rounded-xl p-5 space-y-2">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-accentColor">Quick Overview</h3>
+                        <p class="text-sm text-textPrimary leading-relaxed">Welcome back. Embed your client token code block natively inside your web app environment to start contextual queries immediately.</p>
+                    </div>
+                    <div class="bg-bgSurface border border-borderColor rounded-xl p-5 flex flex-col justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-textSecondary">Active Token Hash</span>
+                        <div id="tokenDisplay" class="text-xs font-mono text-accentColor bg-bgElevated border border-borderColor rounded-lg p-2.5 mt-2 break-all select-all">Loading Node Handshake Token...</div>
+                    </div>
+                </div>
+
+                <div class="bg-bgSurface border border-borderColor rounded-xl p-5 md:p-6 space-y-3">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-textPrimary">Widget Embedding Snippet</h2>
+                    <p class="text-xs text-textSecondary">Copy this asymmetric target integration snippet prior to `</body>` closures.</p>
+                    <div class="bg-bgElevated border border-borderColor rounded-lg p-4 font-mono text-xs text-textPrimary overflow-x-auto whitespace-pre">
+&lt;script 
+  src="<span id="scriptHost"></span>/widget.js" 
+  data-client="<span id="scriptToken">YOUR_CLIENT_TOKEN</span>"&gt;
+&lt;/script&gt;</div>
+                </div>
+            </section>
+
+            <section id="view-documents" class="space-y-6 hidden">
+                <header>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Data Ingestion (RAG)</h1>
+                    <p class="text-textSecondary text-xs md:text-sm">Manage, store, and process semantic raw documents inside vectorized memory layers.</p>
+                </header>
+
+                <div class="bg-bgSurface border border-borderColor rounded-xl p-5 md:p-6 space-y-4">
+                    <div id="dropzone" class="border-2 border-dashed border-borderColor hover:border-accentColor rounded-xl p-6 md:p-8 text-center transition cursor-pointer bg-bgElevated/30">
+                        <input type="file" id="fileInput" class="hidden" multiple>
+                        <p class="text-sm font-medium text-textPrimary">Click to map assets or drag payload models here</p>
+                        <p class="text-xs text-textSecondary mt-1">PDF, DOCX, TXT, CSV, MD (Max 15MB Matrix Size Limit)</p>
+                    </div>
+                    <div id="uploadFeedback" class="text-xs font-medium space-y-1 hidden"></div>
+                </div>
+
+                <div class="bg-bgSurface border border-borderColor rounded-xl overflow-hidden">
+                    <div class="p-4 bg-bgElevated/50 border-b border-borderColor">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-textPrimary">Indexed System Memory Documents</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-bgElevated/20 text-textSecondary uppercase tracking-wider text-[10px] border-b border-borderColor">
+                                <tr>
+                                    <th class="p-4 font-semibold">Document Name</th>
+                                    <th class="p-4 font-semibold">Type</th>
+                                    <th class="p-4 font-semibold text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="documentsTableBody" class="divide-y divide-borderColor text-textPrimary">
+                                <tr>
+                                    <td colspan="3" class="p-4 text-center text-textSecondary italic">Querying runtime cache meta...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-usage" class="space-y-6 hidden">
+                <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold tracking-tight">Usage Analytics</h1>
+                        <p class="text-textSecondary text-xs md:text-sm">Track client interactions and export diagnostic payloads.</p>
+                    </div>
+                    <button onclick="exportTableToCSV()" class="w-full sm:w-auto bg-accentColor hover:opacity-90 text-bgMain font-semibold px-4 py-2 rounded-lg text-xs transition self-start sm:self-center">
+                        Export as Spreadsheet (.CSV)
+                    </button>
+                </header>
+
+                <div class="bg-bgSurface border border-borderColor rounded-xl overflow-hidden">
+                    <div class="p-4 bg-bgElevated/50 border-b border-borderColor">
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-textPrimary">Active Client Profiles Matrix</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table id="usageTable" class="w-full text-left text-xs">
+                            <thead class="bg-bgElevated/20 text-textSecondary uppercase tracking-wider text-[10px] border-b border-borderColor">
+                                <tr>
+                                    <th class="p-4 font-semibold">Visitor Metadata Stream</th>
+                                    <th class="p-4 font-semibold">Session Fingerprint</th>
+                                    <th class="p-4 font-semibold">Recent Logs Matrix</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usageTableBody" class="divide-y divide-borderColor text-textPrimary">
+                                <tr>
+                                    <td colspan="3" class="p-4 text-center text-textSecondary italic">Resolving client array parameters...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-settings" class="space-y-6 hidden">
+                <header>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Security Constraints & Configuration</h1>
+                    <p class="text-textSecondary text-xs md:text-sm">Manage domain cross-origin verification parameters and gateway boundaries.</p>
+                </header>
+
+                <div class="bg-bgSurface border border-borderColor rounded-xl p-5 md:p-6 space-y-4">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-accentColor">Security Setup</h2>
+                    <form id="urlForm" class="space-y-3">
+                        <div>
+                            <label for="allowedUrl" class="block text-[11px] font-semibold text-textSecondary mb-2">Allowed Origin Base URL</label>
+                            <input type="url" id="allowedUrl" placeholder="https://example.com" required 
+                                class="w-full bg-bgElevated border border-borderColor text-textPrimary rounded-lg px-3 py-2.5 text-xs outline-none focus:border-accentColor transition">
+                        </div>
+                        <button type="submit" class="bg-accentColor hover:opacity-90 text-bgMain font-semibold px-4 py-2.5 rounded-lg text-xs transition">
+                            Save Base Domain
+                        </button>
+                    </form>
+                    <p id="urlMessage" class="text-xs font-medium hidden"></p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) { window.location.href = "/login"; }
+
+        document.getElementById("scriptHost").textContent = window.location.origin;
+
+        // Mobile Menu Viewport Toggle Interceptor
+        const mobileToggle = document.getElementById("mobileNavToggle");
+        const sidebar = document.getElementById("sidebar");
+        mobileToggle.onclick = () => {
+            sidebar.classList.toggle("-translate-x-full");
+            mobileToggle.textContent = sidebar.classList.contains("-translate-x-full") ? "Menu" : "Close";
+        };
+
+        // Tab Switching State Machine
+        function switchView(viewId) {
+            ['overview', 'documents', 'usage', 'settings'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+                document.getElementById(`btn-${v}`).classList.remove('nav-active');
+            });
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`btn-${viewId}`).classList.add('nav-active');
+            
+            // Auto collapse mobile drawer menu upon state selection
+            if (!sidebar.classList.contains("-translate-x-full")) {
+                sidebar.classList.add("-translate-x-full");
+                mobileToggle.textContent = "Menu";
+            }
+
+            if (viewId === 'documents') loadDocumentsMeta();
+            if (viewId === 'usage') loadUsageData();
+        }
+
+        // Global Handshake Synchronization Data Fetch
+        async function loadDashboardSettings() {
+            try {
+                const response = await fetch("/getSettings", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if(data.success) {
+                    if(data.allowed_url) { document.getElementById("allowedUrl").value = data.allowed_url; }
+                    document.getElementById("tokenDisplay").textContent = data.client_token;
+                    document.getElementById("scriptToken").textContent = data.client_token;
+                } else { fallbackLogout(); }
+            } catch (err) { console.error("Settings sync connection error.", err); }
+        }
+
+        // Domain Locking Form Submission Endpoint
+        document.getElementById("urlForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const msgEl = document.getElementById("urlMessage");
+            const urlVal = document.getElementById("allowedUrl").value;
+            msgEl.className = "text-xs font-medium text-textSecondary";
+            msgEl.textContent = "Updating domain tracking metrics...";
+            msgEl.classList.remove("hidden");
+
+            try {
+                const res = await fetch("/updateUrl", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                    body: JSON.stringify({ allowed_url: urlVal })
+                });
+                const data = await res.json();
+                msgEl.className = data.success ? "text-xs font-medium text-success" : "text-xs font-medium text-error";
+                msgEl.textContent = data.message;
+            } catch {
+                msgEl.className = "text-xs font-medium text-error";
+                msgEl.textContent = "Synchronization network error.";
+            }
+        });
+
+        // Ingestion File Upload Pipeline Orchestrator
+        const dropzone = document.getElementById("dropzone");
+        const fileInput = document.getElementById("fileInput");
+        const feedback = document.getElementById("uploadFeedback");
+
+        dropzone.onclick = () => fileInput.click();
+        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add("border-accentColor"); };
+        dropzone.ondragleave = () => dropzone.classList.remove("border-accentColor");
+        dropzone.ondrop = (e) => {
+            e.preventDefault();
+            dropzone.classList.remove("border-accentColor");
+            if(e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files);
+        };
+        fileInput.onchange = () => { if(fileInput.files.length > 0) handleFileUpload(fileInput.files); };
+
+        async function handleFileUpload(fileList) {
+            feedback.classList.remove("hidden");
+            feedback.className = "text-xs font-medium text-textSecondary animate-pulse";
+            feedback.textContent = `Processing and chunking ${fileList.length} assets into structural matrices...`;
+
+            const formData = new FormData();
+            for(let i=0; i < fileList.length; i++) { formData.append("files", fileList[i]); }
+
+            try {
+                const res = await fetch("/addDocument", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` },
+                    body: formData
+                });
+                const data = await res.json();
+                if(data.success) {
+                    let out = "";
+                    if(data.uploaded.length > 0) out += `<div class="text-success">✓ Ingested Array: ${data.uploaded.join(', ')}</div>`;
+                    if(data.failed.length > 0) out += `<div class="text-error">× Rejected Packets: ${data.failed.map(f => `${f.filename} (${f.reason})`).join(', ')}</div>`;
+                    feedback.className = "text-xs font-medium space-y-1";
+                    feedback.innerHTML = out;
+                    loadDocumentsMeta();
+                } else {
+                    feedback.className = "text-xs font-medium text-error";
+                    feedback.textContent = data.message || "Asset chunk streaming breakdown fault.";
+                }
+            } catch {
+                feedback.className = "text-xs font-medium text-error";
+                feedback.textContent = "Payload processing broken during file network write.";
+            }
+        }
+
+        // Map Embedded Node File Storage Array Metadata
+        async function loadDocumentsMeta() {
+            const tableBody = document.getElementById("documentsTableBody");
+            try {
+                const res = await fetch("/show_documents", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if(data.success && data.Documents_data.length > 0) {
+                    tableBody.innerHTML = data.Documents_data.map(doc => `
+                        <tr class="hover:bg-bgElevated/30 transition">
+                            <td class="p-4 font-medium max-w-xs truncate">${doc.document_name || doc.file_name || 'Unnamed Asset'}</td>
+                            <td class="p-4 text-textSecondary font-mono text-[11px]">${doc.extension || doc.file_type || 'Unknown'}</td>
+                            <td class="p-4 text-right">
+                                <button onclick="deleteDoc(${doc.id || doc.document_id})" class="text-error hover:underline font-medium text-[11px]">Delete Asset</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-textSecondary italic">No vector assets mapped inside memory core.</td></tr>`;
+                }
+            } catch {
+                tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-error font-medium">Failed reading network meta configuration parameters.</td></tr>`;
+            }
+        }
+
+        // Structural Garbage Collection Memory Vector Disposal
+        async function deleteDoc(docId) {
+            if(!confirm("Are you sure you want to permanently erase this document and its associated embeddings from memory layers?")) return;
+            try {
+                const res = await fetch(`/delete_document?Document_id=${docId}`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if(data.success) { loadDocumentsMeta(); } else { alert(data.message || "Failed processing vector disposal query."); }
+            } catch { alert("Disposal connection dropped."); }
+        }
+
+        // Mapping Usage Logs and Visitor Profiles
+        async function loadUsageData() {
+            const tableBody = document.getElementById("usageTableBody");
+            try {
+                const res = await fetch("/getclientsdata", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                // Flexible mapping depending on incoming array format structure 
+                const usageDataArray = data.Client_data || data.client_data || [];
+                
+                if(data.success && usageDataArray.length > 0) {
+                    tableBody.innerHTML = usageDataArray.map(client => `
+                        <tr class="hover:bg-bgElevated/30 transition">
+                            <td class="p-4 font-medium">${client.visitor_meta || client.name || 'Anonymous Engine'}</td>
+                            <td class="p-4 text-textSecondary font-mono text-[11px]">${client.visitor_id || client.id || 'N/A'}</td>
+                            <td class="p-4 text-textSecondary max-w-xs truncate">${client.recent_logs || client.email || 'No logging records.'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-textSecondary italic">No tracking records recorded across instances.</td></tr>`;
+                }
+            } catch {
+                tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-error font-medium">Failed loading client diagnostic arrays.</td></tr>`;
+            }
+        }
+
+        // High Performance CSV Data Table Structuring Function for Spreadsheets Export
+        function exportTableToCSV() {
+            const rows = document.querySelectorAll("#usageTable tr");
+            let csvContent = "";
+            
+            rows.forEach(row => {
+                const cols = row.querySelectorAll("th, td");
+                const rowData = Array.from(cols).map(c => `"${c.textContent.replace(/"/g, '""').trim()}"`).join(",");
+                csvContent += rowData + "\n";
+            });
+            
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `SmartAI_Analytics_Payload_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function fallbackLogout() { localStorage.clear(); window.location.href = "/login"; }
+        document.getElementById("logoutBtn").onclick = fallbackLogout;
+        
+        // Bootstrapping System Configuration Components
+        loadDashboardSettings();
+    </script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Smart AI — Create Account</title>
+    <meta name="description" content="Get started with Smart AI today. Create a secure personal account to begin capturing and organizing your AI knowledge base.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="/static/signin.css">
+</head>
+<body>
+<div class="auth-wrapper">
+    <main class="card">
+        <header class="brand">
+            <div class="brand-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            </div>
+            <span class="brand-name">Smart AI</span>
+        </header>
+
+        <h1 class="card-heading">Create your account</h1>
+        <p class="card-subheading">Get started with your personal AI knowledge base</p>
+
+        <form id="signupForm">
+            <div class="field">
+                <label for="name">Full name</label>
+                <input type="text" id="name" name="name" placeholder="Jane Smith" required autocomplete="name">
+            </div>
+            <div class="field">
+                <label for="url">Allowed Base URL (Domain Locking)</label>
+                <input type="url" id="url" name="url" placeholder="https://mywebsite.com" required>
+            </div>
+            <div class="field">
+                <label for="email">Email address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a strong password" required autocomplete="new-password">
+            </div>
+            <button type="submit" class="submit-btn">Create Account</button>
+        </form>
+
+        <p id="message" aria-live="polite"></p>
+
+        <div class="divider"></div>
+        <footer class="bottom-text">
+            Already have an account? <a href="/login">Sign in</a>
+        </footer>
+    </main>
+</div>
+<script>
+const signupForm = document.getElementById("signupForm");
+const messageEl = document.getElementById("message");
+
+signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const btn = signupForm.querySelector("button[type='submit']");
+    btn.disabled = true;
+    btn.textContent = "Creating account...";
+
+    messageEl.style.display = "none";
+
+    const formData = new FormData(signupForm);
+
+    try {
+        const response = await fetch("/signin", { method: "POST", body: formData });
+        const data = await response.json();
+
+        messageEl.style.display = "block";
+        messageEl.textContent = data.message;
+
+        if (data.success) {
+            messageEl.style.background = "rgba(34, 197, 94, 0.1)";
+            messageEl.style.color = "#22C55E";
+            messageEl.style.border = "1px solid rgba(34, 197, 94, 0.2)";
+            localStorage.setItem("token", data.token);
+            setTimeout(() => window.location.href = "/dashboard", 700);
+        } else {
+            messageEl.style.background = "rgba(239, 68, 68, 0.1)";
+            messageEl.style.color = "#EF4444";
+            messageEl.style.border = "1px solid rgba(239, 68, 68, 0.2)";
+            btn.disabled = false;
+            btn.textContent = "Create Account";
+        }
+    } catch {
+        messageEl.style.display = "block";
+        messageEl.textContent = "Connection error. Please try again.";
+        messageEl.style.background = "rgba(239, 68, 68, 0.1)";
+        messageEl.style.color = "#EF4444";
+        messageEl.style.border = "1px solid rgba(239, 68, 68, 0.2)";
+        btn.disabled = false;
+        btn.textContent = "Create Account";
+    }
+});
+</script>
+</body>
+</html>

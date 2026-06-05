@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>SupportFlow AI – Autonomous AI Customer Support Platform</title>
+    <meta name="description" content="SupportFlow AI helps businesses automate customer support using AI agents, vector search, contextual retrieval, and workflow automation.">
+    <meta name="keywords" content="AI customer support, AI support agent, autonomous AI assistant, AI SaaS platform, RAG AI support, vector search customer support, business automation AI">
+    
+    <meta property="og:title" content="SupportFlow AI – Autonomous AI Customer Support Platform">
+    <meta property="og:description" content="SupportFlow AI helps businesses automate customer support using AI agents, vector search, contextual retrieval, and workflow automation.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://assistflow.ai">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SupportFlow AI – Autonomous AI Customer Support Platform">
+    <meta name="twitter:description" content="SupportFlow AI helps businesses automate customer support using AI agents, vector search, contextual retrieval, and workflow automation.">
+    
+    <link rel="canonical" href="https://assistflow.ai" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "AssistFlow AI",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "USD"
+      },
+      "description": "Autonomous AI support agent for modern businesses."
+    }
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgPrimary: '#0B1020',
+                        bgSecondary: '#111827',
+                        bgCard: '#1A2335',
+                        primary: '#6366F1',
+                        secondary: '#8B5CF6',
+                        highlight: '#22D3EE',
+                        textMain: '#F9FAFB',
+                        textMuted: '#9CA3AF',
+                        success: '#10B981',
+                        borderCol: 'rgba(255,255,255,0.08)'
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'flow': 'flow 3s infinite linear',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        flow: {
+                            '0%': { strokeDashoffset: '24' },
+                            '100%': { strokeDashoffset: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-nav {
+            background: rgba(11, 16, 32, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #6366F1, #8B5CF6, #22D3EE);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-bgPrimary text-textMain font-sans overflow-x-hidden selection:bg-primary selection:text-white">
+
+    <header class="fixed w-full top-0 z-50 glass-nav border-b border-borderCol">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer">
+                    <span class="text-2xl font-bold tracking-tighter">
+                        AssistFlow <span class="text-primary">AI</span>
+                    </span>
+                </div>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#features" class="text-textMuted hover:text-textMain transition-colors text-sm font-medium">Features</a>
+                    <a href="#how-it-works" class="text-textMuted hover:text-textMain transition-colors text-sm font-medium">How It Works</a>
+                    <a href="#pricing" class="text-textMuted hover:text-textMain transition-colors text-sm font-medium">Pricing</a>
+                    <a href="#faq" class="text-textMuted hover:text-textMain transition-colors text-sm font-medium">FAQ</a>
+                </nav>
+
+                <div class="hidden md:flex items-center space-x-4">
+
+                    <a href="signin"
+                        class="text-textMuted hover:text-textMain text-sm font-medium transition-colors">
+                        Sign In
+                    </a>
+
+                    <a href="signin"
+                        class="bg-primary hover:bg-secondary transition-all duration-300 px-5 py-2.5 rounded-lg text-sm font-semibold shadow-[0_0_15px_rgba(99,102,241,0.4)]">
+                        Get Started
+                    </a>
+
+                    </div>
+
+                    <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-textMuted hover:text-textMain focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-bgSecondary border-b border-borderCol">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#features" class="block px-3 py-2 text-base font-medium text-textMuted hover:text-textMain hover:bg-bgCard rounded-md">Features</a>
+                <a href="#how-it-works" class="block px-3 py-2 text-base font-medium text-textMuted hover:text-textMain hover:bg-bgCard rounded-md">How It Works</a>
+                <a href="#pricing" class="block px-3 py-2 text-base font-medium text-textMuted hover:text-textMain hover:bg-bgCard rounded-md">Pricing</a>
+                <a href="#faq" class="block px-3 py-2 text-base font-medium text-textMuted hover:text-textMain hover:bg-bgCard rounded-md">FAQ</a>
+                <div class="pt-4 flex flex-col space-y-2 px-3">
+                    <button class="w-full text-center text-textMuted hover:text-textMain py-2 border border-borderCol rounded-lg font-medium">Sign In</button>
+                    <button class="w-full bg-primary hover:bg-secondary text-white py-2 rounded-lg font-medium shadow-lg">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="absolute top-20 left-1/4 w-72 h-72 bg-primary/20 rounded-full mix-blend-screen filter blur-[80px] opacity-70 animate-blob"></div>
+        <div class="absolute top-40 right-1/4 w-72 h-72 bg-secondary/20 rounded-full mix-blend-screen filter blur-[80px] opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-1/3 w-72 h-72 bg-highlight/20 rounded-full mix-blend-screen filter blur-[80px] opacity-70 animate-blob animation-delay-4000"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-bgCard border border-borderCol text-sm text-highlight mb-8">
+                <span class="w-2 h-2 rounded-full bg-highlight animate-pulse"></span>
+                Autonomous AI support agent for modern businesses.
+            </div>
+            
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                AI-Powered Customer Support That <br class="hidden lg:block"/>
+                <span class="gradient-text">Thinks, Retrieves, and Resolves.</span>
+            </h1>
+            
+            <p class="mt-4 max-w-2xl text-lg md:text-xl text-textMuted mx-auto mb-10">
+                Upload your business documents and let autonomous AI agents provide intelligent, contextual customer support instantly.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+
+            <a href="/signin"
+                class="bg-primary hover:bg-secondary transition-all duration-300 px-8 py-4 rounded-xl text-lg font-semibold shadow-[0_0_20px_rgba(99,102,241,0.5)] text-center">
+                Get Started
+            </a>
+
+            <a href="/demo"
+                class="bg-bgCard hover:bg-bgSecondary border border-borderCol transition-all duration-300 px-8 py-4 rounded-xl text-lg font-semibold flex items-center justify-center gap-2">
+
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+
+                Watch Demo
+            </a>
+
+            </div>
+
+            <div class="mt-20 relative max-w-5xl mx-auto reveal">
+                <div class="rounded-2xl border border-borderCol bg-bgCard/50 backdrop-blur-xl p-2 shadow-2xl relative">
+                    <div class="flex items-center gap-2 px-4 py-3 border-b border-borderCol">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                        <div class="mx-auto text-xs text-textMuted font-mono">assistflow-dashboard.ai</div>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6 p-6 h-[400px]">
+                        <div class="col-span-1 border-r border-borderCol hidden md:block pr-6 space-y-4">
+                            <div class="h-8 bg-bgSecondary rounded-lg w-full animate-pulse"></div>
+                            <div class="h-20 bg-bgSecondary rounded-lg w-full"></div>
+                            <div class="h-20 bg-primary/10 border border-primary/20 rounded-lg w-full relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent translate-x-[-100%] animate-[shimmer_2s_infinite]"></div>
+                            </div>
+                            <div class="h-20 bg-bgSecondary rounded-lg w-full"></div>
+                        </div>
+                        <div class="col-span-2 flex flex-col space-y-4 justify-end h-full">
+                            <div class="self-end bg-bgSecondary border border-borderCol p-4 rounded-t-xl rounded-bl-xl max-w-sm">
+                                <p class="text-sm">How do I integrate the API with my existing Node.js backend?</p>
+                            </div>
+                            <div class="self-start bg-bgPrimary border border-primary/30 p-4 rounded-t-xl rounded-br-xl max-w-md shadow-[0_0_15px_rgba(99,102,241,0.1)] relative">
+                                <div class="absolute -top-2 -left-2 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                                <p class="text-sm text-textMuted mb-2 flex items-center gap-2"><svg class="w-4 h-4 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Retrieved from Document ID: #882</p>
+                                <p class="text-sm">To integrate with your Node.js backend, you can use our official npm package. Here is the standard initialization block...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-12 border-y border-borderCol bg-bgSecondary relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center reveal">
+                <div>
+                    <p class="text-4xl font-extrabold text-primary mb-2">70%</p>
+                    <p class="text-sm text-textMuted font-medium">Faster Responses</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-extrabold text-secondary mb-2">24/7</p>
+                    <p class="text-sm text-textMuted font-medium">Automated Support</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-extrabold text-highlight mb-2">90%</p>
+                    <p class="text-sm text-textMuted font-medium">Reduced Human Workload</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-extrabold text-success mb-2">99.9%</p>
+                    <p class="text-sm text-textMuted font-medium">Context-Aware Accuracy</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Enterprise-Grade Intelligence</h2>
+                <p class="text-textMuted text-lg">Powerful features designed to handle complex support queries autonomously, scaling your customer service operations instantly.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 glow-hover transition-all duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-textMain">Autonomous AI Responses</h3>
+                    <p class="text-textMuted text-sm leading-relaxed">Agents instantly generate accurate replies using solely your verified knowledge base, preventing hallucinations.</p>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 glow-hover transition-all duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-12 h-12 rounded-lg bg-secondary/20 flex items-center justify-center mb-6 text-secondary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-textMain">Smart Document Retrieval</h3>
+                    <p class="text-textMuted text-sm leading-relaxed">Seamlessly parse PDFs, Word docs, Zendesk articles, and Notion pages into structured, queryable data instantly.</p>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 glow-hover transition-all duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-12 h-12 rounded-lg bg-highlight/20 flex items-center justify-center mb-6 text-highlight">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-textMain">Vector Search Intelligence</h3>
+                    <p class="text-textMuted text-sm leading-relaxed">Utilizes advanced semantic embeddings to understand the true intent behind a user's question, not just keywords.</p>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 glow-hover transition-all duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center mb-6 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-textMain">Multi-Step Workflow Automation</h3>
+                    <p class="text-textMuted text-sm leading-relaxed">Trigger internal APIs, update CRMs, or execute complex multi-step resolutions directly from the chat interface.</p>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 glow-hover transition-all duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-12 h-12 rounded-lg bg-success/20 flex items-center justify-center mb-6 text-success">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-textMain">Human Escalation Detection</h3>
+                    <p class="text-textMuted text-sm leading-relaxed">Automatically detects frustration or high-value queries and smoothly routes the conversation to a human agent.</p>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 glow-hover transition-all duration-300 transform hover:-translate-y-2 reveal">
+                    <div class="w-12 h-12 rounded-lg bg-secondary/20 flex items-center justify-center mb-6 text-secondary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 text-textMain">Real-Time Support Analytics</h3>
+                    <p class="text-textMuted text-sm leading-relaxed">Track deflection rates, average resolution times, and identify content gaps in your existing knowledge base.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="py-24 bg-bgSecondary relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">How AssistFlow Works</h2>
+                <p class="text-textMuted text-lg">From raw documents to autonomous resolution in four simple steps.</p>
+            </div>
+
+            <div class="relative max-w-5xl mx-auto reveal">
+                <div class="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-borderCol -translate-y-1/2 z-0">
+                    <div class="h-full bg-gradient-to-r from-primary via-secondary to-highlight w-full animate-[shimmer_3s_infinite]"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+                    <div class="bg-bgPrimary border border-borderCol p-6 rounded-2xl text-center relative group">
+                        <div class="w-12 h-12 bg-bgCard border-2 border-primary rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-primary group-hover:scale-110 transition-transform">1</div>
+                        <h4 class="font-bold mb-2">Upload documents</h4>
+                        <p class="text-xs text-textMuted">Sync knowledge base, PDFs, and historical tickets.</p>
+                    </div>
+                    <div class="bg-bgPrimary border border-borderCol p-6 rounded-2xl text-center relative group">
+                        <div class="w-12 h-12 bg-bgCard border-2 border-primary rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-primary group-hover:scale-110 transition-transform">2</div>
+                        <h4 class="font-bold mb-2">Extract text & generate embeddings</h4>
+                        <p class="text-xs text-textMuted">AI chunks and converts text into vector representations.</p>
+                    </div>
+                    <div class="bg-bgPrimary border border-borderCol p-6 rounded-2xl text-center relative group">
+                        <div class="w-12 h-12 bg-bgCard border-2 border-secondary rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-secondary group-hover:scale-110 transition-transform">3</div>
+                        <h4 class="font-bold mb-2">Retrieve contextual knowledge</h4>
+                        <p class="text-xs text-textMuted">System matches query semantics to exact document segments.</p>
+                    </div>
+                    <div class="bg-bgPrimary border border-borderCol p-6 rounded-2xl text-center relative group">
+                        <div class="w-12 h-12 bg-bgCard border-2 border-highlight rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold text-highlight group-hover:scale-110 transition-transform">4</div>
+                        <h4 class="font-bold mb-2">AI agent answers autonomously</h4>
+                        <p class="text-xs text-textMuted">Generates a natural, highly accurate resolution for the user.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 relative overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/5 via-bgPrimary to-bgPrimary"></div>
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl font-bold mb-4">Under The Hood Architecture</h2>
+            </div>
+
+            <div class="flex flex-col items-center space-y-4 reveal">
+                <div class="bg-bgCard border border-borderCol shadow-lg px-8 py-4 rounded-xl w-64 text-center font-semibold text-textMain relative z-10">
+                    Customer Query
+                </div>
+                
+                <svg class="w-6 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                
+                <div class="bg-bgCard border border-primary/40 shadow-[0_0_15px_rgba(99,102,241,0.2)] px-8 py-4 rounded-xl w-64 text-center font-semibold text-primary relative z-10">
+                    Intent Detection
+                </div>
+
+                <svg class="w-6 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+
+                <div class="bg-bgCard border border-secondary/40 shadow-[0_0_15px_rgba(139,92,246,0.2)] px-8 py-4 rounded-xl w-64 text-center font-semibold text-secondary relative z-10">
+                    Vector Search
+                </div>
+
+                <svg class="w-6 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+
+                <div class="bg-gradient-to-r from-primary via-secondary to-highlight p-[1px] rounded-xl shadow-[0_0_30px_rgba(34,211,238,0.3)] w-64 z-10">
+                    <div class="bg-bgCard px-8 py-4 rounded-xl text-center font-bold text-white w-full h-full">
+                        Gemini AI Processing
+                    </div>
+                </div>
+
+                <svg class="w-6 h-8 text-highlight" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+
+                <div class="bg-bgCard border border-borderCol shadow-lg px-8 py-4 rounded-xl w-64 text-center font-semibold text-textMain relative z-10">
+                    Decision Engine
+                </div>
+
+                <svg class="w-6 h-8 text-textMuted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+
+                <div class="bg-success/10 border border-success/40 shadow-[0_0_20px_rgba(16,185,129,0.2)] px-8 py-4 rounded-xl w-64 text-center font-bold text-success relative z-10">
+                    Final Response
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="py-24 bg-bgSecondary">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Simple, transparent pricing</h2>
+                <p class="text-textMuted text-lg">Scale your AI support capabilities as your business grows.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 reveal">
+                    <h3 class="text-xl font-bold mb-2">Starter</h3>
+                    <p class="text-textMuted text-sm mb-6">Perfect for small teams starting with AI.</p>
+                    <div class="mb-6"><span class="text-4xl font-extrabold">$49</span><span class="text-textMuted">/mo</span></div>
+                    <ul class="space-y-4 mb-8 text-sm">
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Up to 1,000 resolutions/mo</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Basic vector search</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Email support</li>
+                    </ul>
+                    <button class="w-full bg-bgPrimary hover:bg-bgSecondary border border-borderCol transition-colors py-3 rounded-lg font-semibold">Start Free Trial</button>
+                </div>
+
+                <div class="bg-bgCard border-2 border-primary rounded-2xl p-8 relative transform md:scale-105 shadow-[0_0_30px_rgba(99,102,241,0.15)] reveal z-10">
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Most Popular</div>
+                    <h3 class="text-xl font-bold mb-2 text-primary">Pro</h3>
+                    <p class="text-textMuted text-sm mb-6">Advanced AI capabilities for growing businesses.</p>
+                    <div class="mb-6"><span class="text-4xl font-extrabold">$199</span><span class="text-textMuted">/mo</span></div>
+                    <ul class="space-y-4 mb-8 text-sm">
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Up to 10,000 resolutions/mo</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Advanced context retrieval</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Multi-step workflows</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Priority support</li>
+                    </ul>
+                    <button class="w-full bg-primary hover:bg-secondary transition-colors py-3 rounded-lg font-semibold text-white shadow-lg">Get Started</button>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-2xl p-8 reveal">
+                    <h3 class="text-xl font-bold mb-2">Enterprise</h3>
+                    <p class="text-textMuted text-sm mb-6">Custom deployment and infinite scalability.</p>
+                    <div class="mb-6"><span class="text-4xl font-extrabold">Custom</span></div>
+                    <ul class="space-y-4 mb-8 text-sm">
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Unlimited resolutions</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Custom LLM fine-tuning</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Dedicated account manager</li>
+                    </ul>
+                    <button class="w-full bg-bgPrimary hover:bg-bgSecondary border border-borderCol transition-colors py-3 rounded-lg font-semibold">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="py-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <h2 class="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
+            </div>
+
+            <div class="space-y-4 reveal">
+                <div class="bg-bgCard border border-borderCol rounded-xl overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold">How does the AI understand documents?</span>
+                        <svg class="w-5 h-5 text-textMuted transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content bg-bgPrimary/50">
+                        <p class="px-6 pb-4 pt-2 text-textMuted text-sm">We use advanced vector embeddings to chunk and analyze your text. This allows the AI to capture semantic meaning and intent, rather than just matching raw keywords.</p>
+                    </div>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-xl overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold">Which file formats are supported?</span>
+                        <svg class="w-5 h-5 text-textMuted transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content bg-bgPrimary/50">
+                        <p class="px-6 pb-4 pt-2 text-textMuted text-sm">Currently, we support PDF, DOCX, TXT, CSV, Markdown, as well as direct integrations with Notion, Zendesk, and Intercom knowledge bases.</p>
+                    </div>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-xl overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold">Can humans take over conversations?</span>
+                        <svg class="w-5 h-5 text-textMuted transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content bg-bgPrimary/50">
+                        <p class="px-6 pb-4 pt-2 text-textMuted text-sm">Yes. The AI constantly monitors sentiment and intent. If it detects frustration or a highly complex issue outside its knowledge boundaries, it smoothly routes the chat to an available human agent.</p>
+                    </div>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-xl overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold">Is data secure?</span>
+                        <svg class="w-5 h-5 text-textMuted transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content bg-bgPrimary/50">
+                        <p class="px-6 pb-4 pt-2 text-textMuted text-sm">Absolutely. We use enterprise-grade encryption (AES-256) at rest and in transit. Your proprietary documents are never used to train global, public foundation models.</p>
+                    </div>
+                </div>
+
+                <div class="bg-bgCard border border-borderCol rounded-xl overflow-hidden">
+                    <button class="faq-btn w-full px-6 py-4 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-semibold">How fast is setup?</span>
+                        <svg class="w-5 h-5 text-textMuted transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div class="faq-content bg-bgPrimary/50">
+                        <p class="px-6 pb-4 pt-2 text-textMuted text-sm">Most businesses are fully up and running in under 15 minutes. Just upload your docs, copy the provided integration snippet, and paste it into your website.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 relative overflow-hidden bg-bgSecondary">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl h-64 bg-primary/20 rounded-full mix-blend-screen filter blur-[100px]"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 reveal">
+            <h2 class="text-4xl md:text-5xl font-extrabold mb-6 tracking-tight">Transform Your Customer Support With Autonomous AI</h2>
+            <p class="text-xl text-textMuted mb-10">Join thousands of modern businesses resolving tickets instantly.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button class="bg-primary hover:bg-secondary transition-all duration-300 px-8 py-4 rounded-xl text-lg font-semibold shadow-[0_0_20px_rgba(99,102,241,0.5)]">
+                    Start Free
+                </button>
+                <button class="bg-bgCard hover:bg-bgPrimary border border-borderCol transition-all duration-300 px-8 py-4 rounded-xl text-lg font-semibold">
+                    Schedule Demo
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-bgPrimary border-t border-borderCol pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="md:col-span-1">
+                    <span class="text-xl font-bold tracking-tighter mb-4 inline-block">
+                        AssistFlow <span class="text-primary">AI</span>
+                    </span>
+                    <p class="text-sm text-textMuted">Intelligent, contextual customer support powered by state-of-the-art vector retrieval and autonomous AI agents.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4 text-textMain">Product</h4>
+                    <ul class="space-y-2 text-sm text-textMuted">
+                        <li><a href="#" class="hover:text-primary transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Integrations</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Changelog</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4 text-textMain">Resources</h4>
+                    <ul class="space-y-2 text-sm text-textMuted">
+                        <li><a href="#" class="hover:text-primary transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">API Reference</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Community</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4 text-textMain">Company</h4>
+                    <ul class="space-y-2 text-sm text-textMuted">
+                        <li><a href="#" class="hover:text-primary transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privacy</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pt-8 border-t border-borderCol flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-sm text-textMuted">© 2026 AssistFlow AI. All rights reserved.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-textMuted hover:text-textMain transition-colors">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+                    </a>
+                    <a href="#" class="text-textMuted hover:text-textMain transition-colors">
+                        <span class="sr-only">GitHub</span>
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // FAQ Accordion
+        const faqBtns = document.querySelectorAll('.faq-btn');
+        faqBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const content = btn.nextElementSibling;
+                const icon = btn.querySelector('svg');
+                
+                // Close all others
+                document.querySelectorAll('.faq-content').forEach(otherContent => {
+                    if (otherContent !== content) {
+                        otherContent.style.maxHeight = null;
+                        otherContent.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                    }
+                });
+
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // Scroll Reveal Animation
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+    </script>
+</body>
+</html>

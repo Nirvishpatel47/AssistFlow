@@ -1,0 +1,256 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
+:root {
+    --bg-main: #0B1020;
+    --bg-surface: #12182B;
+    --bg-elevated: #182033;
+    --border-color: #243047;
+    --accent-color: #3BC9DB;
+    --accent-secondary: #5B7CFA;
+    --text-primary: #F3F7FF;
+    --text-secondary: #94A3B8;
+    --text-muted: #5a6a85;
+    --success: #22C55E;
+    --error: #EF4444;
+    --font-stack: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-stack);
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    background: var(--bg-main);
+    background-image:
+        radial-gradient(ellipse at 20% 30%, rgba(59, 201, 219, 0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(91, 124, 250, 0.07) 0%, transparent 50%);
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* iOS viewport fix */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    color: var(--text-primary);
+    /* Allow scroll for small screens / tall keyboards */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ─── Wrapper ─── */
+.auth-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 16px;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+}
+
+/* ─── Card ─── */
+.card {
+    background: var(--bg-surface);
+    padding: 36px 28px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 420px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(59, 201, 219, 0.05);
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Brand ─── */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.brand-icon {
+    width: 34px;
+    height: 34px;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+.card-heading {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+}
+
+.card-subheading {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+/* ─── Form Fields ─── */
+.field {
+    margin-bottom: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+}
+
+input {
+    width: 100%;
+    padding: 13px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 10px;
+    /* 16px prevents iOS auto-zoom on input focus */
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    font-family: var(--font-stack);
+    /* Disable iOS input styling */
+    -webkit-appearance: none;
+    appearance: none;
+    /* Ensure minimum touch target */
+    min-height: 48px;
+}
+
+input::placeholder { color: var(--text-muted); }
+
+input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(59, 201, 219, 0.12);
+}
+
+/* ─── Submit Button ─── */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+    color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 8px;
+    transition: opacity 0.15s ease, transform 0.1s ease;
+    font-family: var(--font-stack);
+    /* Touch target */
+    min-height: 52px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.submit-btn:hover { opacity: 0.88; }
+.submit-btn:active { transform: scale(0.99); }
+.submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ─── Message / Feedback ─── */
+#message {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 13.5px;
+    font-weight: 500;
+    min-height: 20px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    display: none;
+    line-height: 1.4;
+}
+
+#message.visible { display: block; }
+
+/* ─── Bottom Link ─── */
+.bottom-text {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: opacity 0.15s;
+    /* Comfortable tap area for links */
+    display: inline-block;
+    padding: 2px 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+a:hover { opacity: 0.8; }
+
+.divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 22px 0;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 480px) {
+    .auth-wrapper {
+        padding: 16px 12px;
+        /* Account for iOS home bar */
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+        align-items: flex-start;
+        padding-top: 32px;
+    }
+
+    .card {
+        padding: 28px 20px;
+        border-radius: 16px;
+    }
+
+    .card-heading {
+        font-size: 20px;
+    }
+}
+
+@media (min-width: 481px) {
+    body {
+        align-items: center;
+    }
+}
+
+/* Focus ring accessibility */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
