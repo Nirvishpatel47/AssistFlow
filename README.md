@@ -536,7 +536,7 @@ You are free to use, modify, and distribute this software for personal and comme
 For questions, feature requests, or enterprise support:
 
 - Open an issue on GitHub
-- Email: [support@your-AssistFlow-domain.com](mailto:support@your-AssistFlow-domain.com) (replace with your instance)
+- Email: crevoxega@gmail.com
 
 **Built with precision, performance, and practicality in mind.**
 
