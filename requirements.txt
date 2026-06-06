@@ -1,5 +1,6 @@
 python-jose[cryptography]==3.5.0
 
+resend==2.30.1
 requests==2.32.3
 urllib3==2.2.2
 argon2-cffi==25.1.0 

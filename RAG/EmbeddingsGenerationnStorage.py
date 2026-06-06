@@ -6,6 +6,7 @@ from Security.Advance_Logger import logger
 from DATABASE.Redis_Connection import redis_cache
 from typing import Optional
 from Security.get_secretes import load_env_from_secret
+import resend
 import re
 import smtplib
 import asyncio
@@ -86,35 +87,40 @@ class EmbeddingsALL:
     @staticmethod
     def send_escalation_email(customer_query: str, history: str, visitor_id: str, contact_info: str, receiver_email: str):
         try:
-            sender_email = load_env_from_secret("SUPPORT_EMAIL_SENDER")
-            sender_password = load_env_from_secret("SUPPORT_EMAIL_PASSWORD")
+            resend.api_key = load_env_from_secret("RESEND_API_KEY")
 
-            if not all([sender_email, sender_password, receiver_email]):
-                logger.error("SMTP Configurations Missing", "Check local environmental secrets configuration arrays.")
-                return
+            if not resend.api_key or not receiver_email:
+                logger.error("Resend API key or receiver email missing")
+                return False
 
-            msg = MIMEMultipart()
-            msg["From"] = sender_email
-            msg["To"] = receiver_email
-            msg["Subject"] = f"🚨 Escalated Support Ticket — Visitor ID: {visitor_id}"
+            subject = f"🚨 Escalated Support Ticket — Visitor ID: {visitor_id}"
 
-            body = (
-                f"A customer service interaction has been escalated to human operators.\n\n"
-                f"=== CAPTURED CONTACT LINK ===\n"
-                f"User Contact Info: {contact_info}\n\n"
-                f"=== TRIPPED QUERY TRANSACTION ===\n"
-                f"{customer_query}\n\n"
-                f"=== CHAT TRANSACTION LOGS ===\n"
-                f"{history}"
-            )
-            msg.attach(MIMEText(body, "plain"))
+            html_body = f"""
+            <h2>🚨 New Escalated Support Ticket</h2>
+            <p><strong>Visitor ID:</strong> {visitor_id}</p>
+            <p><strong>Contact Info:</strong> {contact_info}</p>
+            
+            <h3>Customer Query</h3>
+            <p>{customer_query}</p>
+            
+            <h3>Chat History</h3>
+            <pre style="background:#f4f4f4;padding:12px;border-radius:6px;">{history}</pre>
+            """
 
-            with smtplib.SMTP("smtp.gmail.com", 587) as server:
-                server.starttls()
-                server.login(sender_email, sender_password)
-                server.send_message(msg)
-        except Exception as smtp_err:
-            logger.error("EmbeddingsALL.send_escalation_email failure", smtp_err)
+            params = {
+                "from": "onboarding@resend.dev", # ← Change this to your verified domain
+                "to": [receiver_email],
+                "subject": subject,
+                "html": html_body,
+            }
+
+            email = resend.Emails.send(params)
+            logger.info(f"Escalation email sent successfully. ID: {email.get('id')}")
+            return True
+
+        except Exception as e:
+            logger.error("Failed to send escalation email via Resend", e)
+            return False
 
     @staticmethod
     async def generate_and_store_embeddings(user_id: int, file_name: str, extension: str, Text: str):
@@ -269,4 +275,4 @@ class EmbeddingsALL:
         return bot_response
     
 if __name__ == "__main__":
-    print(EmbeddingsALL.answer_from_embeddings(3, "There is error in code"))
+    print(EmbeddingsALL.send_escalation_email("Nothing", "Yo", "v2ufs", "9999999999", "nirvishpatel622@gmail.com"))
