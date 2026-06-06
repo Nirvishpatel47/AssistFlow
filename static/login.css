@@ -1,5 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
+/* ─── Design Tokens ─── */
 :root {
     --bg-main: #0B1020;
     --bg-surface: #12182B;
@@ -12,70 +13,98 @@
     --text-muted: #5a6a85;
     --success: #22C55E;
     --error: #EF4444;
+    --warning: #F59E0B;
     --font-stack: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+    --radius-card: 20px;
+    --radius-input: 10px;
+    --shadow-card: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(59,201,219,0.05);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-stack); -webkit-font-smoothing: antialiased; }
+/* ─── Reset ─── */
+*, *::before, *::after {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-stack);
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+}
 
+html { overflow-x: hidden; }
+
+/* ─── Body ─── */
 body {
     background: var(--bg-main);
     background-image:
-        radial-gradient(ellipse at 20% 30%, rgba(59, 201, 219, 0.07) 0%, transparent 50%),
-        radial-gradient(ellipse at 80% 70%, rgba(91, 124, 250, 0.07) 0%, transparent 50%);
-    height: 100vh;
+        radial-gradient(ellipse at 20% 30%, rgba(59,201,219,0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(91,124,250,0.07) 0%, transparent 50%);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--text-primary);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
+/* ─── Wrapper ─── */
 .auth-wrapper {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 24px;
+    padding: 24px 16px;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
 }
 
+/* ─── Card ─── */
 .card {
     background: var(--bg-surface);
     padding: 44px 40px;
-    border-radius: 20px;
+    border-radius: var(--radius-card);
     width: 100%;
     max-width: 420px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(59, 201, 219, 0.05);
-    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-card);
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
+    *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* ─── Brand ─── */
 .brand {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 32px;
+    text-decoration: none;
 }
 
 .brand-icon {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
     border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
 }
 
 .brand-name {
     font-size: 17px;
     font-weight: 700;
     letter-spacing: -0.4px;
+    color: var(--text-primary);
 }
 
+/* ─── Headings ─── */
 .card-heading {
     font-size: 22px;
     font-weight: 700;
@@ -87,11 +116,11 @@ body {
     font-size: 14px;
     color: var(--text-secondary);
     margin-bottom: 28px;
+    line-height: 1.5;
 }
 
-.field {
-    margin-bottom: 16px;
-}
+/* ─── Fields ─── */
+.field { margin-bottom: 16px; }
 
 .field label {
     display: block;
@@ -102,44 +131,101 @@ body {
     letter-spacing: 0.01em;
 }
 
+/* ─── Password wrapper (for toggle) ─── */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper input { padding-right: 44px; }
+
+.pw-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 32px; min-height: 32px;
+    justify-content: center;
+}
+
+.pw-toggle:hover { color: var(--text-secondary); }
+
+/* ─── Input ─── */
 input {
     width: 100%;
     padding: 13px 16px;
     background: var(--bg-elevated);
     border: 1px solid var(--border-color);
     color: var(--text-primary);
-    border-radius: 10px;
-    font-size: 14px;
+    border-radius: var(--radius-input);
+    font-size: 16px; /* Prevents iOS zoom */
     outline: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
     font-family: var(--font-stack);
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 48px;
 }
 
 input::placeholder { color: var(--text-muted); }
 
 input:focus {
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(59, 201, 219, 0.12);
+    box-shadow: 0 0 0 3px rgba(59,201,219,0.12);
 }
 
+input.error-field {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+}
+
+/* ─── Submit Button ─── */
 .submit-btn {
     width: 100%;
     padding: 14px;
     border: none;
     background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
-    color: #ffffff;
-    border-radius: 10px;
+    color: #fff;
+    border-radius: var(--radius-input);
     cursor: pointer;
     font-size: 15px;
     font-weight: 600;
     margin-top: 8px;
     transition: opacity 0.15s ease, transform 0.1s ease;
     font-family: var(--font-stack);
+    min-height: 52px;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
 }
 
 .submit-btn:hover { opacity: 0.88; }
 .submit-btn:active { transform: scale(0.99); }
+.submit-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
+/* Loading spinner inside button */
+.submit-btn .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Message / Feedback ─── */
 #message {
     margin-top: 16px;
     text-align: center;
@@ -149,10 +235,14 @@ input:focus {
     padding: 10px 14px;
     border-radius: 8px;
     display: none;
+    line-height: 1.4;
 }
 
 #message.visible { display: block; }
+#message.success { background: rgba(34,197,94,0.1); color: var(--success); border: 1px solid rgba(34,197,94,0.2); }
+#message.error   { background: rgba(239,68,68,0.1);  color: var(--error);   border: 1px solid rgba(239,68,68,0.2); }
 
+/* ─── Bottom Link ─── */
 .bottom-text {
     margin-top: 24px;
     text-align: center;
@@ -165,6 +255,9 @@ a {
     text-decoration: none;
     font-weight: 600;
     transition: opacity 0.15s;
+    display: inline-block;
+    padding: 2px 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 a:hover { opacity: 0.8; }
@@ -174,3 +267,73 @@ a:hover { opacity: 0.8; }
     background: var(--border-color);
     margin: 24px 0;
 }
+
+/* ─── Focus ring accessibility ─── */
+:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+:focus:not(:focus-visible) { outline: none; }
+
+/* ─── Responsive ─── */
+@media (max-width: 480px) {
+    .auth-wrapper {
+        padding: 16px 12px;
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
+        align-items: flex-start;
+        padding-top: 32px;
+    }
+    .card {
+        padding: 28px 20px;
+        border-radius: 16px;
+    }
+    .card-heading { font-size: 20px; }
+}
+
+@media (min-width: 481px) {
+    body { align-items: center; }
+}
+
+/* ─── Toast Notification System ─── */
+#toast-container {
+    position: fixed;
+    top: 20px; right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 16px;
+    min-width: 260px;
+    max-width: 340px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: toastIn 0.3s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: all;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+.toast.out { animation: toastOut 0.25s ease forwards; }
+
+@keyframes toastIn  { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity:1; transform: translateX(0); }    to { opacity:0; transform: translateX(20px); } }
+
+.toast-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.toast.success .toast-dot { background: var(--success); }
+.toast.error   .toast-dot { background: var(--error); }
+.toast.info    .toast-dot { background: var(--accent-color); }

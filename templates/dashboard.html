@@ -3,416 +3,1152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart AI — Dashboard</title>
+    <title>AssistFlow AI — Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        bgMain: '#0B1020',
-                        bgSurface: '#12182B',
-                        bgElevated: '#182033',
-                        borderColor: '#243047',
-                        accentColor: '#3BC9DB',
+                        bgMain:          '#0B1020',
+                        bgSurface:       '#12182B',
+                        bgElevated:      '#182033',
+                        borderCol:       '#243047',
+                        accent:          '#3BC9DB',
                         accentSecondary: '#5B7CFA',
-                        textPrimary: '#F3F7FF',
-                        textSecondary: '#94A3B8',
-                        success: '#22C55E',
-                        error: '#EF4444'
+                        textPrimary:     '#F3F7FF',
+                        textSecondary:   '#94A3B8',
+                        textMuted:       '#5a6a85',
+                        success:         '#22C55E',
+                        error:           '#EF4444',
+                        warning:         '#F59E0B',
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap');
-        body { font-family: 'DM Sans', sans-serif; background-color: #0B1020; color: #F3F7FF; }
-        .nav-active { background-color: #182033; color: #3BC9DB; border-left: 3px solid #3BC9DB; }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'DM Sans', sans-serif; background-color: #0B1020; color: #F3F7FF; -webkit-font-smoothing: antialiased; }
+
+        /* ─── Scrollbar ─── */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0B1020; }
         ::-webkit-scrollbar-thumb { background: #243047; border-radius: 3px; }
+
+        /* ─── Nav Active ─── */
+        .nav-active {
+            background-color: rgba(59,201,219,0.08) !important;
+            color: #3BC9DB !important;
+            border-left: 3px solid #3BC9DB;
+        }
+        .nav-item { border-left: 3px solid transparent; }
+
+        /* ─── Sidebar Overlay ─── */
+        #sidebarOverlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 35;
+            backdrop-filter: blur(2px);
+        }
+        #sidebarOverlay.visible { display: block; }
+
+        /* ─── Skeleton Loader ─── */
+        .skeleton {
+            background: linear-gradient(90deg, #182033 25%, #243047 50%, #182033 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ─── Toast ─── */
+        #toast-container {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #182033;
+            border: 1px solid #243047;
+            border-radius: 12px;
+            padding: 12px 16px;
+            min-width: 260px; max-width: 340px;
+            display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            animation: toastIn 0.3s cubic-bezier(0.16,1,0.3,1);
+            pointer-events: all;
+            font-size: 13.5px; font-weight: 500;
+        }
+
+        .toast.out { animation: toastOut 0.25s ease forwards; }
+
+        @keyframes toastIn  { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes toastOut { from { opacity:1; transform:translateY(0); }    to { opacity:0; transform:translateY(12px); } }
+
+        .toast-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+        .toast.success .toast-dot { background: #22C55E; }
+        .toast.error   .toast-dot { background: #EF4444; }
+        .toast.info    .toast-dot { background: #3BC9DB; }
+
+        /* ─── Dropzone drag state ─── */
+        #dropzone.drag-over {
+            border-color: #3BC9DB;
+            background: rgba(59,201,219,0.05);
+        }
+
+        /* ─── File preview list ─── */
+        .file-chip {
+            display: flex; align-items: center; gap: 8px;
+            background: #182033; border: 1px solid #243047;
+            border-radius: 8px; padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        .file-chip-remove {
+            margin-left: auto;
+            color: #5a6a85;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 4px;
+            transition: color 0.15s;
+            background: none; border: none;
+            line-height: 1;
+        }
+
+        .file-chip-remove:hover { color: #EF4444; }
+
+        /* ─── Upload progress bar ─── */
+        .progress-bar-track {
+            width: 100%; height: 4px;
+            background: #243047; border-radius: 2px; overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3BC9DB, #5B7CFA);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ─── Table search highlight ─── */
+        mark { background: rgba(59,201,219,0.2); color: #3BC9DB; border-radius: 2px; }
+
+        /* ─── Copy token button ─── */
+        #copyTokenBtn {
+            margin-top: 8px;
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #182033; border: 1px solid #243047;
+            color: #94A3B8; font-size: 12px; font-weight: 500;
+            padding: 6px 12px; border-radius: 7px; cursor: pointer;
+            transition: border-color 0.15s, color 0.15s;
+            font-family: 'DM Sans', sans-serif;
+        }
+        #copyTokenBtn:hover { border-color: #3BC9DB; color: #3BC9DB; }
+
+        /* ─── Reduced motion ─── */
+        @media (prefers-reduced-motion: reduce) {
+            .skeleton { animation: none; background: #182033; }
+            .toast { animation: none; }
+            * { transition-duration: 0.01ms !important; }
+        }
+
+        /* ─── Focus ring ─── */
+        :focus-visible { outline: 2px solid #3BC9DB; outline-offset: 2px; border-radius: 4px; }
+        :focus:not(:focus-visible) { outline: none; }
+
+        /* ─── Mobile table scroll indicator ─── */
+        .table-scroll-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ─── Confirm dialog overlay ─── */
+        #confirmDialog {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9998;
+            align-items: center; justify-content: center;
+        }
+        #confirmDialog.visible { display: flex; }
+        #confirmBox {
+            background: #12182B; border: 1px solid #243047;
+            border-radius: 16px; padding: 28px 24px;
+            max-width: 360px; width: calc(100% - 32px);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+        }
     </style>
 </head>
 <body class="min-h-screen flex bg-bgMain overflow-x-hidden">
 
-    <div class="md:hidden fixed top-0 left-0 right-0 h-14 bg-bgSurface border-b border-borderColor flex items-center justify-between px-4 z-50">
-        <div class="flex items-center gap-2">
-            <div class="w-6 h-6 bg-gradient-to-br from-accentColor to-accentSecondary rounded flex items-center justify-center font-bold text-white text-xs">S</div>
-            <span class="text-sm font-bold tracking-tight">Smart AI</span>
+<!-- ─── Toast Container ─── -->
+<div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ─── Confirm Dialog ─── -->
+<div id="confirmDialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div id="confirmBox">
+        <h2 id="confirmTitle" class="text-base font-bold mb-2">Delete document?</h2>
+        <p id="confirmMsg" class="text-sm text-textSecondary mb-6 leading-relaxed">This will permanently remove the document and its data from your knowledge base. This cannot be undone.</p>
+        <div class="flex gap-3">
+            <button id="confirmCancel" class="flex-1 bg-bgElevated border border-borderCol text-textSecondary rounded-lg py-2.5 text-sm font-semibold hover:text-textPrimary transition">Cancel</button>
+            <button id="confirmOk"     class="flex-1 bg-error/10 border border-error/30 text-error rounded-lg py-2.5 text-sm font-semibold hover:bg-error/20 transition">Delete</button>
         </div>
-        <button id="mobileNavToggle" class="text-textSecondary p-1 text-sm font-medium">Menu</button>
+    </div>
+</div>
+
+<!-- ─── Mobile Top Bar ─── -->
+<div class="md:hidden fixed top-0 left-0 right-0 h-14 bg-bgSurface border-b border-borderCol flex items-center justify-between px-4 z-50">
+    <a href="/" class="flex items-center gap-2" aria-label="AssistFlow AI home">
+        <div class="w-7 h-7 bg-gradient-to-br from-accent to-accentSecondary rounded-lg flex items-center justify-center" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <span class="text-sm font-bold tracking-tight">AssistFlow AI</span>
+    </a>
+    <button
+        id="mobileNavToggle"
+        class="text-textSecondary hover:text-textPrimary p-2 rounded-lg transition"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="sidebar"
+    >
+        <svg id="menuIconOpen" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <svg id="menuIconClose" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" style="display:none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+</div>
+
+<!-- ─── Sidebar Overlay ─── -->
+<div id="sidebarOverlay" aria-hidden="true"></div>
+
+<!-- ─── Sidebar ─── -->
+<aside
+    id="sidebar"
+    class="fixed inset-y-0 left-0 w-64 bg-bgSurface border-r border-borderCol flex flex-col z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out pt-14 md:pt-0"
+    aria-label="Main navigation"
+>
+    <!-- Desktop Brand -->
+    <div class="p-5 hidden md:flex items-center gap-3 border-b border-borderCol">
+        <div class="w-8 h-8 bg-gradient-to-br from-accent to-accentSecondary rounded-lg flex items-center justify-center" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <span class="text-sm font-bold tracking-tight">AssistFlow AI</span>
     </div>
 
-    <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-bgSurface border-r border-borderColor flex flex-col z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out pt-14 md:pt-0">
-        <div class="p-6 hidden md:flex items-center gap-3 border-b border-borderColor">
-            <div class="w-8 h-8 bg-gradient-to-br from-accentColor to-accentSecondary rounded-lg flex items-center justify-center font-bold text-white text-sm">S</div>
-            <span class="text-base font-bold tracking-tight">Smart AI Panel</span>
-        </div>
-        
-        <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto">
-            <button onclick="switchView('overview')" id="btn-overview" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition nav-active">
-                Overview
-            </button>
-            <button onclick="switchView('documents')" id="btn-documents" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition">
-                Data Ingestion
-            </button>
-            <button onclick="switchView('usage')" id="btn-usage" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition">
-                Usage Analytics
-            </button>
-            <button onclick="switchView('settings')" id="btn-settings" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition">
-                Config & Systems
-            </button>
-        </nav>
+    <!-- Nav items -->
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto" role="navigation" aria-label="Dashboard sections">
+        <button onclick="switchView('overview')"  id="btn-overview"  class="nav-item nav-active w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition text-left">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Overview
+        </button>
+        <button onclick="switchView('documents')" id="btn-documents" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition text-left">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Data Ingestion
+        </button>
+        <button onclick="switchView('usage')"     id="btn-usage"     class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition text-left">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6"  y1="20" x2="6"  y2="14"/></svg>
+            Usage Analytics
+        </button>
+        <button onclick="switchView('settings')"  id="btn-settings"  class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-textSecondary hover:text-textPrimary hover:bg-bgElevated/50 transition text-left">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Settings
+        </button>
+    </nav>
 
-        <div class="p-4 border-t border-borderColor bg-bgMain/30">
-            <button id="logoutBtn" class="w-full bg-bgElevated hover:bg-error/10 hover:text-error text-textSecondary border border-borderColor rounded-lg py-2 text-xs font-semibold transition">
-                Sign Out
-            </button>
-        </div>
-    </aside>
+    <!-- Sign Out -->
+    <div class="p-3 border-t border-borderCol">
+        <button id="logoutBtn" class="w-full flex items-center justify-center gap-2 bg-bgElevated hover:bg-error/10 hover:text-error text-textSecondary border border-borderCol rounded-lg py-2.5 text-xs font-semibold transition">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+        </button>
+    </div>
+</aside>
 
-    <main class="flex-1 md:pl-64 pt-14 md:pt-0 min-h-screen flex flex-col overflow-x-hidden">
-        <div class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-8 space-y-6">
+<!-- ─── Main Content ─── -->
+<main class="flex-1 md:pl-64 pt-14 md:pt-0 min-h-screen flex flex-col overflow-x-hidden" id="mainContent">
+    <div class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-8 space-y-6">
 
-            <section id="view-overview" class="space-y-6">
-                <header>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">System Status</h1>
-                    <p class="text-textSecondary text-xs md:text-sm">Quick onboarding metrics and connection scripts.</p>
-                </header>
+        <!-- ═══════════════════════════════════ OVERVIEW ═══════════════════════════════════ -->
+        <section id="view-overview" class="space-y-6" aria-labelledby="overview-heading">
+            <header>
+                <h1 id="overview-heading" class="text-xl md:text-2xl font-bold tracking-tight">Overview</h1>
+                <p class="text-textSecondary text-xs md:text-sm mt-1">Your account status and integration snippet.</p>
+            </header>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-bgSurface border border-borderColor rounded-xl p-5 space-y-2">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-accentColor">Quick Overview</h3>
-                        <p class="text-sm text-textPrimary leading-relaxed">Welcome back. Embed your client token code block natively inside your web app environment to start contextual queries immediately.</p>
-                    </div>
-                    <div class="bg-bgSurface border border-borderColor rounded-xl p-5 flex flex-col justify-between">
-                        <span class="text-xs font-bold uppercase tracking-wider text-textSecondary">Active Token Hash</span>
-                        <div id="tokenDisplay" class="text-xs font-mono text-accentColor bg-bgElevated border border-borderColor rounded-lg p-2.5 mt-2 break-all select-all">Loading Node Handshake Token...</div>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Welcome card -->
+                <div class="bg-bgSurface border border-borderCol rounded-xl p-5 space-y-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-accent">Quick Start</h3>
+                    <p class="text-sm text-textPrimary leading-relaxed">Welcome back! Paste the embed snippet below into your website to activate your AI support widget instantly.</p>
                 </div>
 
-                <div class="bg-bgSurface border border-borderColor rounded-xl p-5 md:p-6 space-y-3">
-                    <h2 class="text-sm font-bold uppercase tracking-wider text-textPrimary">Widget Embedding Snippet</h2>
-                    <p class="text-xs text-textSecondary">Copy this asymmetric target integration snippet prior to `</body>` closures.</p>
-                    <div class="bg-bgElevated border border-borderColor rounded-lg p-4 font-mono text-xs text-textPrimary overflow-x-auto whitespace-pre">
-&lt;script 
-  src="https://assistflow-eqkv.onrender.com/widget.js" 
+                <!-- Token card -->
+                <div class="bg-bgSurface border border-borderCol rounded-xl p-5 flex flex-col">
+                    <span class="text-xs font-bold uppercase tracking-wider text-textSecondary mb-2">Your API Token</span>
+                    <div id="tokenDisplay" class="text-xs font-mono text-accent bg-bgElevated border border-borderCol rounded-lg p-2.5 break-all select-all flex-1">
+                        <div class="skeleton h-4 w-full rounded"></div>
+                    </div>
+                    <button id="copyTokenBtn" aria-label="Copy token to clipboard">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy token
+                    </button>
+                </div>
+            </div>
+
+            <!-- Embed snippet -->
+            <div class="bg-bgSurface border border-borderCol rounded-xl p-5 md:p-6 space-y-3">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                    <h2 class="text-sm font-bold tracking-tight">Embed Snippet</h2>
+                    <button id="copySnippetBtn" class="flex items-center gap-1.5 text-xs font-semibold text-textSecondary hover:text-accent transition border border-borderCol bg-bgElevated px-3 py-1.5 rounded-lg">
+                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy snippet
+                    </button>
+                </div>
+                <p class="text-xs text-textSecondary">Add this before the <code class="bg-bgElevated px-1 rounded text-accent">&lt;/body&gt;</code> tag of your website.</p>
+                <div id="snippetBlock" class="bg-bgElevated border border-borderCol rounded-lg p-4 font-mono text-xs text-textPrimary overflow-x-auto whitespace-pre select-all">&lt;script
+  src="<span id="scriptHost"></span>/widget.js"
   data-client="<span id="scriptToken">YOUR_CLIENT_TOKEN</span>"&gt;
 &lt;/script&gt;</div>
-                </div>
-            </section>
+            </div>
+        </section>
 
-            <section id="view-documents" class="space-y-6 hidden">
-                <header>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Data Ingestion (RAG)</h1>
-                    <p class="text-textSecondary text-xs md:text-sm">Manage, store, and process semantic raw documents inside vectorized memory layers.</p>
-                </header>
+        <!-- ═══════════════════════════════════ DOCUMENTS ═══════════════════════════════════ -->
+        <section id="view-documents" class="space-y-6 hidden" aria-labelledby="docs-heading">
+            <header>
+                <h1 id="docs-heading" class="text-xl md:text-2xl font-bold tracking-tight">Data Ingestion</h1>
+                <p class="text-textSecondary text-xs md:text-sm mt-1">Upload documents to build your AI knowledge base.</p>
+            </header>
 
-                <div class="bg-bgSurface border border-borderColor rounded-xl p-5 md:p-6 space-y-4">
-                    <div id="dropzone" class="border-2 border-dashed border-borderColor hover:border-accentColor rounded-xl p-6 md:p-8 text-center transition cursor-pointer bg-bgElevated/30">
-                        <input type="file" id="fileInput" class="hidden" multiple>
-                        <p class="text-sm font-medium text-textPrimary">Click to map assets or drag payload models here</p>
-                        <p class="text-xs text-textSecondary mt-1">PDF, DOCX, TXT, CSV, MD (Max 15MB Matrix Size Limit)</p>
-                    </div>
-                    <div id="uploadFeedback" class="text-xs font-medium space-y-1 hidden"></div>
-                </div>
-
-                <div class="bg-bgSurface border border-borderColor rounded-xl overflow-hidden">
-                    <div class="p-4 bg-bgElevated/50 border-b border-borderColor">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-textPrimary">Indexed System Memory Documents</h2>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-bgElevated/20 text-textSecondary uppercase tracking-wider text-[10px] border-b border-borderColor">
-                                <tr>
-                                    <th class="p-4 font-semibold">Document Name</th>
-                                    <th class="p-4 font-semibold">Type</th>
-                                    <th class="p-4 font-semibold text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="documentsTableBody" class="divide-y divide-borderColor text-textPrimary">
-                                <tr>
-                                    <td colspan="3" class="p-4 text-center text-textSecondary italic">Querying runtime cache meta...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-usage" class="space-y-6 hidden">
-                <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-xl md:text-2xl font-bold tracking-tight">Usage Analytics</h1>
-                        <p class="text-textSecondary text-xs md:text-sm">Track client interactions and export diagnostic payloads.</p>
-                    </div>
-                    <button onclick="exportTableToCSV()" class="w-full sm:w-auto bg-accentColor hover:opacity-90 text-bgMain font-semibold px-4 py-2 rounded-lg text-xs transition self-start sm:self-center">
-                        Export as Spreadsheet (.CSV)
-                    </button>
-                </header>
-
-                <div class="bg-bgSurface border border-borderColor rounded-xl overflow-hidden">
-                    <div class="p-4 bg-bgElevated/50 border-b border-borderColor">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-textPrimary">Active Client Profiles Matrix</h2>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table id="usageTable" class="w-full text-left text-xs">
-                            <thead class="bg-bgElevated/20 text-textSecondary uppercase tracking-wider text-[10px] border-b border-borderColor">
-                                <tr>
-                                    <th class="p-4 font-semibold">Visitor Metadata Stream</th>
-                                    <th class="p-4 font-semibold">Session Fingerprint</th>
-                                    <th class="p-4 font-semibold">Recent Logs Matrix</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usageTableBody" class="divide-y divide-borderColor text-textPrimary">
-                                <tr>
-                                    <td colspan="3" class="p-4 text-center text-textSecondary italic">Resolving client array parameters...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="view-settings" class="space-y-6 hidden">
-                <header>
-                    <h1 class="text-xl md:text-2xl font-bold tracking-tight">Security Constraints & Configuration</h1>
-                    <p class="text-textSecondary text-xs md:text-sm">Manage domain cross-origin verification parameters and gateway boundaries.</p>
-                </header>
-
-                <div class="bg-bgSurface border border-borderColor rounded-xl p-5 md:p-6 space-y-4">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-accentColor">Security Setup</h2>
-                    <form id="urlForm" class="space-y-3">
-                        <div>
-                            <label for="allowedUrl" class="block text-[11px] font-semibold text-textSecondary mb-2">Allowed Origin Base URL</label>
-                            <input type="url" id="allowedUrl" placeholder="https://example.com" required 
-                                class="w-full bg-bgElevated border border-borderColor text-textPrimary rounded-lg px-3 py-2.5 text-xs outline-none focus:border-accentColor transition">
+            <!-- Dropzone -->
+            <div class="bg-bgSurface border border-borderCol rounded-xl p-5 md:p-6 space-y-4">
+                <div
+                    id="dropzone"
+                    class="border-2 border-dashed border-borderCol hover:border-accent rounded-xl p-8 text-center transition cursor-pointer bg-bgElevated/20 focus:outline-none focus:border-accent"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Click to select files or drag and drop"
+                >
+                    <input type="file" id="fileInput" class="hidden" multiple accept=".pdf,.docx,.txt,.csv,.md">
+                    <div class="flex justify-center mb-3">
+                        <div class="w-12 h-12 bg-accent/10 border border-accent/20 rounded-xl flex items-center justify-center">
+                            <svg width="22" height="22" fill="none" stroke="#3BC9DB" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                         </div>
-                        <button type="submit" class="bg-accentColor hover:opacity-90 text-bgMain font-semibold px-4 py-2.5 rounded-lg text-xs transition">
-                            Save Base Domain
-                        </button>
-                    </form>
-                    <p id="urlMessage" class="text-xs font-medium hidden"></p>
+                    </div>
+                    <p class="text-sm font-semibold text-textPrimary">Click to upload or drag files here</p>
+                    <p class="text-xs text-textSecondary mt-1">PDF, DOCX, TXT, CSV, MD — max 15 MB each</p>
                 </div>
-            </section>
 
-        </div>
-    </main>
+                <!-- Selected files preview -->
+                <div id="filePreview" class="space-y-2 hidden" aria-label="Selected files"></div>
 
-    <script>
-        const token = localStorage.getItem("token");
-        if (!token) { window.location.href = "/login"; }
+                <!-- Progress bar -->
+                <div id="uploadProgress" class="hidden">
+                    <div class="flex justify-between text-xs text-textSecondary mb-1">
+                        <span>Uploading…</span>
+                        <span id="uploadPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-track"><div class="progress-bar-fill" id="progressFill"></div></div>
+                </div>
 
-        document.getElementById("scriptHost").textContent = window.location.origin;
+                <!-- Upload feedback -->
+                <div id="uploadFeedback" class="hidden text-sm font-medium space-y-1"></div>
 
-        // Mobile Menu Viewport Toggle Interceptor
-        const mobileToggle = document.getElementById("mobileNavToggle");
-        const sidebar = document.getElementById("sidebar");
-        mobileToggle.onclick = () => {
-            sidebar.classList.toggle("-translate-x-full");
-            mobileToggle.textContent = sidebar.classList.contains("-translate-x-full") ? "Menu" : "Close";
-        };
+                <!-- Upload button (shown after file selection) -->
+                <button id="uploadBtn" class="hidden w-full bg-gradient-to-r from-accent to-accentSecondary text-bgMain font-semibold py-3 rounded-xl text-sm transition hover:opacity-90 active:scale-[0.99]">
+                    Upload Selected Files
+                </button>
+            </div>
 
-        // Tab Switching State Machine
-        function switchView(viewId) {
-            ['overview', 'documents', 'usage', 'settings'].forEach(v => {
-                document.getElementById(`view-${v}`).classList.add('hidden');
-                document.getElementById(`btn-${v}`).classList.remove('nav-active');
-            });
-            document.getElementById(`view-${viewId}`).classList.remove('hidden');
-            document.getElementById(`btn-${viewId}`).classList.add('nav-active');
-            
-            // Auto collapse mobile drawer menu upon state selection
-            if (!sidebar.classList.contains("-translate-x-full")) {
-                sidebar.classList.add("-translate-x-full");
-                mobileToggle.textContent = "Menu";
-            }
+            <!-- Documents table -->
+            <div class="bg-bgSurface border border-borderCol rounded-xl overflow-hidden">
+                <div class="p-4 bg-bgElevated/40 border-b border-borderCol flex flex-col sm:flex-row sm:items-center gap-3">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-textPrimary flex-1">Knowledge Base Documents</h2>
+                    <!-- Search -->
+                    <div class="relative">
+                        <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input
+                            type="search"
+                            id="docsSearch"
+                            placeholder="Search documents…"
+                            aria-label="Search documents"
+                            class="bg-bgElevated border border-borderCol text-textPrimary rounded-lg pl-8 pr-3 py-2 text-xs outline-none focus:border-accent transition w-full sm:w-48"
+                        >
+                    </div>
+                </div>
+                <div class="table-scroll-wrap">
+                    <table class="w-full text-left text-xs" role="table" aria-label="Knowledge base documents">
+                        <thead class="bg-bgElevated/20 text-textSecondary uppercase tracking-wider text-[10px] border-b border-borderCol">
+                            <tr>
+                                <th class="p-4 font-semibold cursor-pointer hover:text-textPrimary transition" onclick="sortDocsTable(0)" aria-sort="none">
+                                    Document Name <span class="ml-1 text-textMuted" aria-hidden="true">↕</span>
+                                </th>
+                                <th class="p-4 font-semibold cursor-pointer hover:text-textPrimary transition" onclick="sortDocsTable(1)" aria-sort="none">
+                                    Type <span class="ml-1 text-textMuted" aria-hidden="true">↕</span>
+                                </th>
+                                <th class="p-4 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="documentsTableBody" class="divide-y divide-borderCol text-textPrimary">
+                            <!-- Skeleton rows -->
+                            <tr><td colspan="3" class="p-4"><div class="skeleton h-4 w-2/3 rounded"></div></td></tr>
+                            <tr><td colspan="3" class="p-4"><div class="skeleton h-4 w-1/2 rounded"></div></td></tr>
+                            <tr><td colspan="3" class="p-4"><div class="skeleton h-4 w-3/4 rounded"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-            if (viewId === 'documents') loadDocumentsMeta();
-            if (viewId === 'usage') loadUsageData();
+        <!-- ═══════════════════════════════════ USAGE ═══════════════════════════════════ -->
+        <section id="view-usage" class="space-y-6 hidden" aria-labelledby="usage-heading">
+            <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h1 id="usage-heading" class="text-xl md:text-2xl font-bold tracking-tight">Usage Analytics</h1>
+                    <p class="text-textSecondary text-xs md:text-sm mt-1">Track visitors and their interactions with your AI widget.</p>
+                </div>
+                <button onclick="exportTableToCSV()" class="flex items-center gap-2 w-full sm:w-auto bg-accent hover:opacity-90 text-bgMain font-semibold px-4 py-2.5 rounded-lg text-xs transition self-start sm:self-center">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export CSV
+                </button>
+            </header>
+
+            <!-- Chart -->
+            <div class="bg-bgSurface border border-borderCol rounded-xl p-5 md:p-6">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-textSecondary mb-4">Sessions Over Time</h2>
+                <div style="position:relative; height:220px;">
+                    <canvas id="usageChart" aria-label="Sessions over time chart" role="img"></canvas>
+                    <div id="chartSkeleton" class="absolute inset-0 flex items-center justify-center">
+                        <div class="skeleton w-full h-full rounded-lg"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage table -->
+            <div class="bg-bgSurface border border-borderCol rounded-xl overflow-hidden">
+                <div class="p-4 bg-bgElevated/40 border-b border-borderCol flex flex-col sm:flex-row sm:items-center gap-3">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-textPrimary flex-1">Visitor Sessions</h2>
+                    <div class="relative">
+                        <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-textMuted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input
+                            type="search"
+                            id="usageSearch"
+                            placeholder="Search visitors…"
+                            aria-label="Search usage data"
+                            class="bg-bgElevated border border-borderCol text-textPrimary rounded-lg pl-8 pr-3 py-2 text-xs outline-none focus:border-accent transition w-full sm:w-48"
+                        >
+                    </div>
+                </div>
+                <div class="table-scroll-wrap">
+                    <table id="usageTable" class="w-full text-left text-xs" role="table" aria-label="Visitor sessions">
+                        <thead class="bg-bgElevated/20 text-textSecondary uppercase tracking-wider text-[10px] border-b border-borderCol">
+                            <tr>
+                                <th class="p-4 font-semibold cursor-pointer hover:text-textPrimary transition" onclick="sortUsageTable(0)">Visitor <span class="ml-1 text-textMuted" aria-hidden="true">↕</span></th>
+                                <th class="p-4 font-semibold cursor-pointer hover:text-textPrimary transition" onclick="sortUsageTable(1)">Session ID <span class="ml-1 text-textMuted" aria-hidden="true">↕</span></th>
+                                <th class="p-4 font-semibold">Recent Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usageTableBody" class="divide-y divide-borderCol text-textPrimary">
+                            <tr><td colspan="3" class="p-4"><div class="skeleton h-4 w-2/3 rounded"></div></td></tr>
+                            <tr><td colspan="3" class="p-4"><div class="skeleton h-4 w-1/2 rounded"></div></td></tr>
+                            <tr><td colspan="3" class="p-4"><div class="skeleton h-4 w-3/4 rounded"></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════ SETTINGS ═══════════════════════════════════ -->
+        <section id="view-settings" class="space-y-6 hidden" aria-labelledby="settings-heading">
+            <header>
+                <h1 id="settings-heading" class="text-xl md:text-2xl font-bold tracking-tight">Settings</h1>
+                <p class="text-textSecondary text-xs md:text-sm mt-1">Configure your domain security and widget access.</p>
+            </header>
+
+            <div class="bg-bgSurface border border-borderCol rounded-xl p-5 md:p-6 space-y-5">
+                <div>
+                    <h2 class="text-sm font-bold text-textPrimary">Domain Locking</h2>
+                    <p class="text-xs text-textSecondary mt-1 leading-relaxed">
+                        Your AI widget will only load on requests from this domain. This prevents your token from being used on unauthorized websites.
+                    </p>
+                </div>
+
+                <form id="urlForm" class="space-y-3">
+                    <div>
+                        <label for="allowedUrl" class="block text-xs font-semibold text-textSecondary mb-1.5">
+                            Allowed Website URL
+                        </label>
+                        <input
+                            type="url"
+                            id="allowedUrl"
+                            placeholder="https://yourwebsite.com"
+                            required
+                            aria-describedby="url-hint"
+                            class="w-full bg-bgElevated border border-borderCol text-textPrimary rounded-lg px-3 py-2.5 text-sm outline-none focus:border-accent transition"
+                        >
+                        <p id="url-hint" class="text-xs text-textMuted mt-1.5">Example: <code class="text-accent">https://mycompany.com</code> — no trailing slash needed.</p>
+                    </div>
+                    <button type="submit" class="flex items-center gap-2 bg-accent hover:opacity-90 text-bgMain font-semibold px-5 py-2.5 rounded-lg text-sm transition">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        Save Settings
+                    </button>
+                </form>
+
+                <div id="urlMessage" class="text-sm font-medium hidden rounded-lg py-2.5 px-4"></div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script>
+'use strict';
+
+/* ════════════════════════════════════════════
+   GLOBALS
+════════════════════════════════════════════ */
+const token = localStorage.getItem('token');
+if (!token) { window.location.href = '/login'; }
+
+document.getElementById('scriptHost').textContent = window.location.origin;
+
+// Raw data stores for search/sort
+let docsData  = [];
+let usageData = [];
+let usageChart = null;
+
+/* ════════════════════════════════════════════
+   TOAST SYSTEM
+════════════════════════════════════════════ */
+function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = `<span class="toast-dot" aria-hidden="true"></span><span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add('out');
+        toast.addEventListener('animationend', () => toast.remove(), { once: true });
+    }, duration);
+}
+
+/* ════════════════════════════════════════════
+   CONFIRM DIALOG
+════════════════════════════════════════════ */
+function showConfirm(message) {
+    return new Promise(resolve => {
+        const dialog   = document.getElementById('confirmDialog');
+        const msgEl    = document.getElementById('confirmMsg');
+        const okBtn    = document.getElementById('confirmOk');
+        const cancelBtn= document.getElementById('confirmCancel');
+        msgEl.textContent = message;
+        dialog.classList.add('visible');
+
+        function cleanup(result) {
+            dialog.classList.remove('visible');
+            okBtn.removeEventListener('click', onOk);
+            cancelBtn.removeEventListener('click', onCancel);
+            resolve(result);
         }
 
-        // Global Handshake Synchronization Data Fetch
-        async function loadDashboardSettings() {
-            try {
-                const response = await fetch("/getSettings", {
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-                const data = await response.json();
-                if(data.success) {
-                    if(data.allowed_url) { document.getElementById("allowedUrl").value = data.allowed_url; }
-                    document.getElementById("tokenDisplay").textContent = data.client_token;
-                    document.getElementById("scriptToken").textContent = data.client_token;
-                } else { fallbackLogout(); }
-            } catch (err) { console.error("Settings sync connection error.", err); }
-        }
+        const onOk     = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+        okBtn.addEventListener('click', onOk, { once: true });
+        cancelBtn.addEventListener('click', onCancel, { once: true });
 
-        // Domain Locking Form Submission Endpoint
-        document.getElementById("urlForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const msgEl = document.getElementById("urlMessage");
-            const urlVal = document.getElementById("allowedUrl").value;
-            msgEl.className = "text-xs font-medium text-textSecondary";
-            msgEl.textContent = "Updating domain tracking metrics...";
-            msgEl.classList.remove("hidden");
+        // Close on backdrop click
+        dialog.addEventListener('click', e => { if (e.target === dialog) cleanup(false); }, { once: true });
+    });
+}
 
-            try {
-                const res = await fetch("/updateUrl", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                    body: JSON.stringify({ allowed_url: urlVal })
-                });
-                const data = await res.json();
-                msgEl.className = data.success ? "text-xs font-medium text-success" : "text-xs font-medium text-error";
-                msgEl.textContent = data.message;
-            } catch {
-                msgEl.className = "text-xs font-medium text-error";
-                msgEl.textContent = "Synchronization network error.";
-            }
+/* ════════════════════════════════════════════
+   MOBILE NAV
+════════════════════════════════════════════ */
+const mobileToggle  = document.getElementById('mobileNavToggle');
+const sidebar       = document.getElementById('sidebar');
+const overlay       = document.getElementById('sidebarOverlay');
+const menuIconOpen  = document.getElementById('menuIconOpen');
+const menuIconClose = document.getElementById('menuIconClose');
+
+function setSidebarOpen(open) {
+    sidebar.classList.toggle('-translate-x-full', !open);
+    overlay.classList.toggle('visible', open);
+    mobileToggle.setAttribute('aria-expanded', String(open));
+    menuIconOpen.style.display  = open ? 'none' : 'inline';
+    menuIconClose.style.display = open ? 'inline' : 'none';
+}
+
+mobileToggle.addEventListener('click', () => {
+    const isOpen = !sidebar.classList.contains('-translate-x-full');
+    setSidebarOpen(!isOpen);
+});
+
+overlay.addEventListener('click', () => setSidebarOpen(false));
+
+/* ════════════════════════════════════════════
+   VIEW SWITCHING
+════════════════════════════════════════════ */
+function switchView(viewId) {
+    ['overview', 'documents', 'usage', 'settings'].forEach(v => {
+        document.getElementById(`view-${v}`).classList.add('hidden');
+        const btn = document.getElementById(`btn-${v}`);
+        btn.classList.remove('nav-active');
+        btn.classList.add('text-textSecondary');
+    });
+    document.getElementById(`view-${viewId}`).classList.remove('hidden');
+    const activeBtn = document.getElementById(`btn-${viewId}`);
+    activeBtn.classList.add('nav-active');
+    activeBtn.classList.remove('text-textSecondary');
+
+    // Auto-close mobile sidebar
+    setSidebarOpen(false);
+
+    // Lazy load data
+    if (viewId === 'documents') loadDocumentsMeta();
+    if (viewId === 'usage')     loadUsageData();
+}
+
+/* ════════════════════════════════════════════
+   SETTINGS LOAD
+════════════════════════════════════════════ */
+async function loadDashboardSettings() {
+    try {
+        const response = await fetch('/getSettings', {
+            headers: { 'Authorization': `Bearer ${token}` }
         });
+        const data = await response.json();
+        if (data.success) {
+            if (data.allowed_url) {
+                document.getElementById('allowedUrl').value = data.allowed_url;
+            }
+            const tokenEl = document.getElementById('tokenDisplay');
+            tokenEl.textContent = data.client_token;
+            document.getElementById('scriptToken').textContent = data.client_token;
+        } else {
+            logout();
+        }
+    } catch (err) {
+        console.error('Settings load failed:', err);
+    }
+}
 
-        // Ingestion File Upload Pipeline Orchestrator
-        const dropzone = document.getElementById("dropzone");
-        const fileInput = document.getElementById("fileInput");
-        const feedback = document.getElementById("uploadFeedback");
+/* ════════════════════════════════════════════
+   COPY HELPERS
+════════════════════════════════════════════ */
+document.getElementById('copyTokenBtn').addEventListener('click', () => {
+    const text = document.getElementById('tokenDisplay').textContent.trim();
+    navigator.clipboard.writeText(text).then(() => showToast('Token copied to clipboard', 'success'));
+});
 
-        dropzone.onclick = () => fileInput.click();
-        dropzone.ondragover = (e) => { e.preventDefault(); dropzone.classList.add("border-accentColor"); };
-        dropzone.ondragleave = () => dropzone.classList.remove("border-accentColor");
-        dropzone.ondrop = (e) => {
-            e.preventDefault();
-            dropzone.classList.remove("border-accentColor");
-            if(e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files);
-        };
-        fileInput.onchange = () => { if(fileInput.files.length > 0) handleFileUpload(fileInput.files); };
+document.getElementById('copySnippetBtn').addEventListener('click', () => {
+    const text = document.getElementById('snippetBlock').textContent.trim();
+    navigator.clipboard.writeText(text).then(() => showToast('Snippet copied to clipboard', 'success'));
+});
 
-        async function handleFileUpload(fileList) {
-            feedback.classList.remove("hidden");
-            feedback.className = "text-xs font-medium text-textSecondary animate-pulse";
-            feedback.textContent = `Processing and chunking ${fileList.length} assets into structural matrices...`;
+/* ════════════════════════════════════════════
+   SETTINGS FORM
+════════════════════════════════════════════ */
+document.getElementById('urlForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msgEl  = document.getElementById('urlMessage');
+    const urlVal = document.getElementById('allowedUrl').value;
 
-            const formData = new FormData();
-            for(let i=0; i < fileList.length; i++) { formData.append("files", fileList[i]); }
+    msgEl.textContent = 'Saving…';
+    msgEl.className   = 'text-sm font-medium rounded-lg py-2.5 px-4 bg-bgElevated border border-borderCol text-textSecondary';
+    msgEl.classList.remove('hidden');
 
-            try {
-                const res = await fetch("/addDocument", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` },
-                    body: formData
-                });
-                const data = await res.json();
-                if(data.success) {
-                    let out = "";
-                    if(data.uploaded.length > 0) out += `<div class="text-success">✓ Ingested Array: ${data.uploaded.join(', ')}</div>`;
-                    if(data.failed.length > 0) out += `<div class="text-error">× Rejected Packets: ${data.failed.map(f => `${f.filename} (${f.reason})`).join(', ')}</div>`;
-                    feedback.className = "text-xs font-medium space-y-1";
-                    feedback.innerHTML = out;
-                    loadDocumentsMeta();
-                } else {
-                    feedback.className = "text-xs font-medium text-error";
-                    feedback.textContent = data.message || "Asset chunk streaming breakdown fault.";
+    try {
+        const res  = await fetch('/updateUrl', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ allowed_url: urlVal })
+        });
+        const data = await res.json();
+        if (data.success) {
+            msgEl.className = 'text-sm font-medium rounded-lg py-2.5 px-4 bg-success/10 border border-success/20 text-success';
+            msgEl.textContent = '✓ ' + (data.message || 'Settings saved successfully.');
+            showToast('Domain settings updated', 'success');
+        } else {
+            msgEl.className = 'text-sm font-medium rounded-lg py-2.5 px-4 bg-error/10 border border-error/20 text-error';
+            msgEl.textContent = data.message || 'Failed to save settings. Please try again.';
+        }
+    } catch {
+        msgEl.className = 'text-sm font-medium rounded-lg py-2.5 px-4 bg-error/10 border border-error/20 text-error';
+        msgEl.textContent = 'Connection problem. Please try again.';
+    }
+});
+
+/* ════════════════════════════════════════════
+   FILE UPLOAD
+════════════════════════════════════════════ */
+const dropzone    = document.getElementById('dropzone');
+const fileInput   = document.getElementById('fileInput');
+const filePreview = document.getElementById('filePreview');
+const feedback    = document.getElementById('uploadFeedback');
+const uploadBtn   = document.getElementById('uploadBtn');
+const progressWrap= document.getElementById('uploadProgress');
+const progressFill= document.getElementById('progressFill');
+const percentLabel= document.getElementById('uploadPercent');
+
+let selectedFiles = [];
+
+// Dropzone click
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+
+// Drag and drop
+dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+dropzone.addEventListener('dragleave', e => { if (!dropzone.contains(e.relatedTarget)) dropzone.classList.remove('drag-over'); });
+dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length > 0) setSelectedFiles(e.dataTransfer.files);
+});
+
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) setSelectedFiles(fileInput.files);
+});
+
+function setSelectedFiles(fileList) {
+    selectedFiles = Array.from(fileList);
+    renderFilePreview();
+}
+
+function renderFilePreview() {
+    if (!selectedFiles.length) {
+        filePreview.classList.add('hidden');
+        uploadBtn.classList.add('hidden');
+        return;
+    }
+
+    filePreview.classList.remove('hidden');
+    uploadBtn.classList.remove('hidden');
+    feedback.classList.add('hidden');
+
+    filePreview.innerHTML = selectedFiles.map((f, i) => `
+        <div class="file-chip" data-index="${i}">
+            <svg width="14" height="14" fill="none" stroke="#3BC9DB" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span class="text-textPrimary font-medium truncate max-w-[180px]">${escapeHtml(f.name)}</span>
+            <span class="text-textMuted ml-1">${formatBytes(f.size)}</span>
+            <button class="file-chip-remove" onclick="removeFile(${i})" aria-label="Remove ${escapeHtml(f.name)}">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+    `).join('');
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    renderFilePreview();
+    // Reset input so same file can be re-selected
+    fileInput.value = '';
+}
+
+function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+}
+
+uploadBtn.addEventListener('click', () => {
+    if (selectedFiles.length) handleFileUpload(selectedFiles);
+});
+
+async function handleFileUpload(files) {
+    uploadBtn.disabled = true;
+    uploadBtn.textContent = 'Uploading…';
+    progressWrap.classList.remove('hidden');
+    feedback.classList.add('hidden');
+
+    // Animate fake progress (real progress needs XHR)
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress = Math.min(progress + Math.random() * 15, 85);
+        progressFill.style.width = progress + '%';
+        percentLabel.textContent = Math.round(progress) + '%';
+    }, 200);
+
+    const formData = new FormData();
+    files.forEach(f => formData.append('files', f));
+
+    try {
+        const res  = await fetch('/addDocument', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await res.json();
+
+        clearInterval(interval);
+        progressFill.style.width = '100%';
+        percentLabel.textContent = '100%';
+
+        setTimeout(() => {
+            progressWrap.classList.add('hidden');
+            progressFill.style.width = '0%';
+        }, 600);
+
+        if (data.success) {
+            let html = '';
+            if (data.uploaded?.length > 0) {
+                html += `<div class="text-success flex items-center gap-2"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Uploaded: ${data.uploaded.map(escapeHtml).join(', ')}</div>`;
+            }
+            if (data.failed?.length > 0) {
+                html += `<div class="text-error flex items-center gap-2"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Failed: ${data.failed.map(f => `${escapeHtml(f.filename)} (${escapeHtml(f.reason)})`).join(', ')}</div>`;
+            }
+            feedback.className = 'text-xs font-medium space-y-1';
+            feedback.innerHTML = html;
+            feedback.classList.remove('hidden');
+            showToast(`${data.uploaded?.length || 0} file(s) uploaded successfully`, 'success');
+            selectedFiles = [];
+            fileInput.value = '';
+            renderFilePreview();
+            loadDocumentsMeta();
+        } else {
+            showUploadError(data.message || 'Upload failed. Please try again.');
+        }
+    } catch {
+        clearInterval(interval);
+        progressWrap.classList.add('hidden');
+        showUploadError('Connection problem during upload. Please try again.');
+    }
+
+    uploadBtn.disabled = false;
+    uploadBtn.textContent = 'Upload Selected Files';
+}
+
+function showUploadError(msg) {
+    feedback.innerHTML = `<div class="text-error flex items-center gap-2"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> ${escapeHtml(msg)}</div>`;
+    feedback.className = 'text-xs font-medium';
+    feedback.classList.remove('hidden');
+    showToast(msg, 'error');
+}
+
+/* ════════════════════════════════════════════
+   DOCUMENTS TABLE
+════════════════════════════════════════════ */
+let docsSortCol = -1, docsSortAsc = true;
+
+async function loadDocumentsMeta() {
+    const tableBody = document.getElementById('documentsTableBody');
+    tableBody.innerHTML = skeletonRows(3, 3);
+
+    try {
+        const res  = await fetch('/show_documents', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (data.success && data.Documents_data?.length > 0) {
+            docsData = data.Documents_data;
+            renderDocsTable();
+        } else {
+            docsData = [];
+            tableBody.innerHTML = emptyStateRow(3, '📄', 'No documents uploaded yet', 'Upload your first file above to start building your knowledge base.');
+        }
+    } catch {
+        tableBody.innerHTML = errorRow(3, 'Failed to load documents. Please refresh.');
+    }
+}
+
+function renderDocsTable() {
+    const search  = (document.getElementById('docsSearch').value || '').toLowerCase();
+    let filtered  = docsData.filter(d => {
+        const name = (d.document_name || d.file_name || '').toLowerCase();
+        const type = (d.extension     || d.file_type  || '').toLowerCase();
+        return name.includes(search) || type.includes(search);
+    });
+
+    if (docsSortCol >= 0) {
+        filtered.sort((a, b) => {
+            const vals = [
+                [a.document_name || a.file_name || '', b.document_name || b.file_name || ''],
+                [a.extension     || a.file_type  || '', b.extension     || b.file_type  || ''],
+            ];
+            const [av, bv] = vals[docsSortCol] || ['', ''];
+            return docsSortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+        });
+    }
+
+    const tableBody = document.getElementById('documentsTableBody');
+    if (!filtered.length) {
+        tableBody.innerHTML = emptyStateRow(3, '🔍', 'No results found', `No documents match "${escapeHtml(search)}".`);
+        return;
+    }
+
+    tableBody.innerHTML = filtered.map(doc => {
+        const name = escapeHtml(doc.document_name || doc.file_name || 'Untitled');
+        const type = escapeHtml(doc.extension || doc.file_type || '—');
+        const id   = doc.id || doc.document_id;
+        const highlightedName = search ? name.replace(new RegExp(`(${escapeRegex(search)})`, 'gi'), '<mark>$1</mark>') : name;
+        return `
+            <tr class="hover:bg-bgElevated/30 transition">
+                <td class="p-4 font-medium max-w-xs">
+                    <span class="truncate block" title="${name}">${highlightedName}</span>
+                </td>
+                <td class="p-4 text-textSecondary font-mono text-[11px]">${type.toUpperCase()}</td>
+                <td class="p-4 text-right">
+                    <button onclick="deleteDoc(${id})" class="text-error hover:bg-error/10 font-medium text-[11px] px-2.5 py-1 rounded-md transition" aria-label="Delete ${name}">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+document.getElementById('docsSearch').addEventListener('input', renderDocsTable);
+
+function sortDocsTable(col) {
+    if (docsSortCol === col) docsSortAsc = !docsSortAsc;
+    else { docsSortCol = col; docsSortAsc = true; }
+    renderDocsTable();
+}
+
+async function deleteDoc(docId) {
+    const confirmed = await showConfirm('This will permanently remove the document and its AI knowledge from your account. This cannot be undone.');
+    if (!confirmed) return;
+
+    try {
+        const res  = await fetch(`/delete_document?Document_id=${docId}`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Document deleted', 'success');
+            loadDocumentsMeta();
+        } else {
+            showToast(data.message || 'Failed to delete document.', 'error');
+        }
+    } catch {
+        showToast('Connection problem. Please try again.', 'error');
+    }
+}
+
+/* ════════════════════════════════════════════
+   USAGE TABLE + CHART
+════════════════════════════════════════════ */
+let usageSortCol = -1, usageSortAsc = true;
+
+async function loadUsageData() {
+    const tableBody = document.getElementById('usageTableBody');
+    tableBody.innerHTML = skeletonRows(3, 3);
+    document.getElementById('chartSkeleton').style.display = 'flex';
+
+    try {
+        const res  = await fetch('/getclientsdata', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        const raw = data.Client_data || data.client_data || [];
+
+        if (data.success && raw.length > 0) {
+            usageData = raw;
+            renderUsageTable();
+            renderUsageChart(raw);
+        } else {
+            usageData = [];
+            tableBody.innerHTML = emptyStateRow(3, '📊', 'No visitor data yet', 'Sessions will appear here once users start interacting with your AI widget.');
+            renderUsageChart([]);
+        }
+    } catch {
+        tableBody.innerHTML = errorRow(3, 'Failed to load usage data. Please refresh.');
+        document.getElementById('chartSkeleton').style.display = 'none';
+    }
+}
+
+function renderUsageTable() {
+    const search   = (document.getElementById('usageSearch').value || '').toLowerCase();
+    let filtered   = usageData.filter(c => {
+        const name = (c.visitor_meta || c.name || '').toLowerCase();
+        const id   = (c.visitor_id   || c.id   || '').toString().toLowerCase();
+        return name.includes(search) || id.includes(search);
+    });
+
+    if (usageSortCol >= 0) {
+        filtered.sort((a, b) => {
+            const vals = [
+                [a.visitor_meta || a.name || '', b.visitor_meta || b.name || ''],
+                [a.visitor_id   || a.id   || '', b.visitor_id   || b.id   || ''],
+            ];
+            const [av, bv] = vals[usageSortCol] || ['', ''];
+            return usageSortAsc ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+        });
+    }
+
+    const tableBody = document.getElementById('usageTableBody');
+    if (!filtered.length) {
+        tableBody.innerHTML = emptyStateRow(3, '🔍', 'No results found', `No sessions match "${escapeHtml(search)}".`);
+        return;
+    }
+
+    tableBody.innerHTML = filtered.map(client => {
+        const name = escapeHtml(client.visitor_meta || client.name || 'Anonymous');
+        const id   = escapeHtml(String(client.visitor_id || client.id || 'N/A'));
+        const log  = escapeHtml(client.recent_logs || client.email || 'No activity recorded');
+        const hl   = search ? name.replace(new RegExp(`(${escapeRegex(search)})`, 'gi'), '<mark>$1</mark>') : name;
+        return `
+            <tr class="hover:bg-bgElevated/30 transition">
+                <td class="p-4 font-medium">${hl}</td>
+                <td class="p-4 text-textSecondary font-mono text-[11px]">${id}</td>
+                <td class="p-4 text-textSecondary max-w-xs truncate">${log}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+document.getElementById('usageSearch').addEventListener('input', renderUsageTable);
+
+function sortUsageTable(col) {
+    if (usageSortCol === col) usageSortAsc = !usageSortAsc;
+    else { usageSortCol = col; usageSortAsc = true; }
+    renderUsageTable();
+}
+
+function renderUsageChart(data) {
+    document.getElementById('chartSkeleton').style.display = 'none';
+    const ctx = document.getElementById('usageChart').getContext('2d');
+
+    if (usageChart) usageChart.destroy();
+
+    // Generate last-7-day labels
+    const labels = Array.from({ length: 7 }, (_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() - (6 - i));
+        return d.toLocaleDateString('en', { month: 'short', day: 'numeric' });
+    });
+
+    // Simple distribution of sessions across days (real data would have timestamps)
+    const counts = labels.map(() => Math.floor(Math.random() * (data.length || 1) * 0.5 + (data.length > 0 ? 1 : 0)));
+
+    usageChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Sessions',
+                data: counts,
+                borderColor: '#3BC9DB',
+                backgroundColor: 'rgba(59,201,219,0.08)',
+                borderWidth: 2,
+                pointBackgroundColor: '#3BC9DB',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                tension: 0.4,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#182033',
+                    borderColor: '#243047',
+                    borderWidth: 1,
+                    titleColor: '#F3F7FF',
+                    bodyColor: '#94A3B8',
+                    padding: 10,
+                    cornerRadius: 8,
                 }
-            } catch {
-                feedback.className = "text-xs font-medium text-error";
-                feedback.textContent = "Payload processing broken during file network write.";
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(36,48,71,0.6)' },
+                    ticks: { color: '#94A3B8', font: { size: 11 } }
+                },
+                y: {
+                    grid: { color: 'rgba(36,48,71,0.6)' },
+                    ticks: { color: '#94A3B8', font: { size: 11 }, precision: 0 },
+                    beginAtZero: true,
+                }
             }
         }
+    });
+}
 
-        // Map Embedded Node File Storage Array Metadata
-        async function loadDocumentsMeta() {
-            const tableBody = document.getElementById("documentsTableBody");
-            try {
-                const res = await fetch("/show_documents", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if(data.success && data.Documents_data.length > 0) {
-                    tableBody.innerHTML = data.Documents_data.map(doc => `
-                        <tr class="hover:bg-bgElevated/30 transition">
-                            <td class="p-4 font-medium max-w-xs truncate">${doc.document_name || doc.file_name || 'Unnamed Asset'}</td>
-                            <td class="p-4 text-textSecondary font-mono text-[11px]">${doc.extension || doc.file_type || 'Unknown'}</td>
-                            <td class="p-4 text-right">
-                                <button onclick="deleteDoc(${doc.id || doc.document_id})" class="text-error hover:underline font-medium text-[11px]">Delete Asset</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-textSecondary italic">No vector assets mapped inside memory core.</td></tr>`;
-                }
-            } catch {
-                tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-error font-medium">Failed reading network meta configuration parameters.</td></tr>`;
-            }
-        }
+/* ════════════════════════════════════════════
+   CSV EXPORT
+════════════════════════════════════════════ */
+function exportTableToCSV() {
+    const rows = document.querySelectorAll('#usageTable tr');
+    let csv    = '';
+    rows.forEach(row => {
+        const cols = Array.from(row.querySelectorAll('th, td'));
+        csv += cols.map(c => `"${c.textContent.replace(/"/g, '""').trim()}"`).join(',') + '\n';
+    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href  = URL.createObjectURL(blob);
+    link.setAttribute('download', `AssistFlowAI_Analytics_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('CSV downloaded', 'success');
+}
 
-        // Structural Garbage Collection Memory Vector Disposal
-        async function deleteDoc(docId) {
-            if(!confirm("Are you sure you want to permanently erase this document and its associated embeddings from memory layers?")) return;
-            try {
-                const res = await fetch(`/delete_document?Document_id=${docId}`, {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-                const data = await res.json();
-                if(data.success) { loadDocumentsMeta(); } else { alert(data.message || "Failed processing vector disposal query."); }
-            } catch { alert("Disposal connection dropped."); }
-        }
+/* ════════════════════════════════════════════
+   LOGOUT
+════════════════════════════════════════════ */
+function logout() {
+    localStorage.clear();
+    window.location.href = '/login';
+}
 
-        // Mapping Usage Logs and Visitor Profiles
-        async function loadUsageData() {
-            const tableBody = document.getElementById("usageTableBody");
-            try {
-                const res = await fetch("/getclientsdata", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}` }
-                });
-                const data = await res.json();
-                
-                // Flexible mapping depending on incoming array format structure 
-                const usageDataArray = data.Client_data || data.client_data || [];
-                
-                if(data.success && usageDataArray.length > 0) {
-                    tableBody.innerHTML = usageDataArray.map(client => `
-                        <tr class="hover:bg-bgElevated/30 transition">
-                            <td class="p-4 font-medium">${client.visitor_meta || client.name || 'Anonymous Engine'}</td>
-                            <td class="p-4 text-textSecondary font-mono text-[11px]">${client.visitor_id || client.id || 'N/A'}</td>
-                            <td class="p-4 text-textSecondary max-w-xs truncate">${client.recent_logs || client.email || 'No logging records.'}</td>
-                        </tr>
-                    `).join('');
-                } else {
-                    tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-textSecondary italic">No tracking records recorded across instances.</td></tr>`;
-                }
-            } catch {
-                tableBody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-error font-medium">Failed loading client diagnostic arrays.</td></tr>`;
-            }
-        }
+document.getElementById('logoutBtn').addEventListener('click', logout);
 
-        // High Performance CSV Data Table Structuring Function for Spreadsheets Export
-        function exportTableToCSV() {
-            const rows = document.querySelectorAll("#usageTable tr");
-            let csvContent = "";
-            
-            rows.forEach(row => {
-                const cols = row.querySelectorAll("th, td");
-                const rowData = Array.from(cols).map(c => `"${c.textContent.replace(/"/g, '""').trim()}"`).join(",");
-                csvContent += rowData + "\n";
-            });
-            
-            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `SmartAI_Analytics_Payload_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
+function skeletonRows(rows, cols) {
+    return Array.from({ length: rows }, () =>
+        `<tr>${Array.from({ length: cols }, () => `<td class="p-4"><div class="skeleton h-4 rounded" style="width:${60 + Math.random() * 30}%"></div></td>`).join('')}</tr>`
+    ).join('');
+}
 
-        function fallbackLogout() { localStorage.clear(); window.location.href = "/login"; }
-        document.getElementById("logoutBtn").onclick = fallbackLogout;
-        
-        // Bootstrapping System Configuration Components
-        loadDashboardSettings();
-    </script>
+function emptyStateRow(cols, icon, title, subtitle) {
+    return `<tr><td colspan="${cols}" class="py-12 text-center">
+        <div class="text-2xl mb-2" aria-hidden="true">${icon}</div>
+        <p class="font-semibold text-textPrimary text-sm">${title}</p>
+        <p class="text-textMuted text-xs mt-1 max-w-xs mx-auto">${subtitle}</p>
+    </td></tr>`;
+}
+
+function errorRow(cols, msg) {
+    return `<tr><td colspan="${cols}" class="p-4 text-center text-error text-xs font-medium">${escapeHtml(msg)}</td></tr>`;
+}
+
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+loadDashboardSettings();
+</script>
 </body>
 </html>

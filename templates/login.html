@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Smart AI — Login</title>
-    <meta name="description" content="Sign in to your Smart AI account to manage your personal AI knowledge base, save insights, and continue your workflow.">
-    <link rel="canonical" href="https://smart-ai-example.com/login">
-    
+    <title>AssistFlow AI — Login</title>
+    <meta name="description" content="Sign in to your AssistFlow AI account to manage your AI-powered knowledge base and customer support workflows.">
+    <link rel="canonical" href="https://assistflow.ai/login">
+
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://smart-ai-example.com/login">
-    <meta property="og:title" content="Smart AI — Login">
-    <meta property="og:description" content="Sign in to your Smart AI account to manage your personal AI knowledge base.">
-    
+    <meta property="og:url" content="https://assistflow.ai/login">
+    <meta property="og:title" content="AssistFlow AI — Login">
+    <meta property="og:description" content="Sign in to your AssistFlow AI account.">
+
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:url" content="https://smart-ai-example.com/login">
-    <meta name="twitter:title" content="Smart AI — Login">
-    <meta name="twitter:description" content="Sign in to your Smart AI account to manage your personal AI knowledge base.">
+    <meta name="twitter:title" content="AssistFlow AI — Login">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,88 +23,175 @@
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Smart AI Login",
-      "description": "Sign in page for the Smart AI knowledge base platform."
+      "name": "AssistFlow AI Login",
+      "description": "Sign in page for the AssistFlow AI platform."
     }
     </script>
 </head>
 <body>
+
+<!-- Toast Container -->
+<div id="toast-container" role="status" aria-live="polite" aria-atomic="true"></div>
+
 <div class="auth-wrapper">
-    <main class="card">
-        <header class="brand">
+    <main class="card" role="main">
+
+        <!-- Brand -->
+        <a href="/" class="brand" aria-label="AssistFlow AI home">
             <div class="brand-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" aria-hidden="true">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
             </div>
-            <span class="brand-name">Smart AI</span>
-        </header>
+            <span class="brand-name">AssistFlow AI</span>
+        </a>
 
         <h1 class="card-heading">Welcome back</h1>
         <p class="card-subheading">Sign in to your account to continue</p>
 
-        <form id="loginForm">
+        <form id="loginForm" novalidate>
+            <!-- Email -->
             <div class="field">
                 <label for="email">Email address</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    required
+                    autocomplete="email"
+                    inputmode="email"
+                    aria-required="true"
+                >
             </div>
+
+            <!-- Password -->
             <div class="field">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="current-password">
+                <div class="input-wrapper">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="••••••••"
+                        required
+                        autocomplete="current-password"
+                        aria-required="true"
+                    >
+                    <button
+                        type="button"
+                        class="pw-toggle"
+                        id="pwToggle"
+                        aria-label="Show password"
+                        aria-pressed="false"
+                        tabindex="0"
+                    >
+                        <!-- Eye icon (show) -->
+                        <svg id="eyeShow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <!-- Eye-off icon (hide) – hidden by default -->
+                        <svg id="eyeHide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                            <line x1="1" y1="1" x2="23" y2="23"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="submit-btn">Sign In</button>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                Sign In
+            </button>
         </form>
 
-        <p id="message" aria-live="polite"></p>
+        <!-- Inline feedback (kept for no-JS fallback; toast handles JS-on) -->
+        <p id="message" role="alert" aria-live="assertive"></p>
 
-        <div class="divider"></div>
+        <div class="divider" role="separator"></div>
         <footer class="bottom-text">
             Don't have an account? <a href="/signin">Create one</a>
         </footer>
+
     </main>
 </div>
-<script>
-    const loginForm = document.getElementById("loginForm");
-const messageEl = document.getElementById("message");
 
-loginForm.addEventListener("submit", async (e) => {
+<script>
+/* ─── Toast System ─── */
+function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<span class="toast-dot" aria-hidden="true"></span><span>${message}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+        toast.classList.add('out');
+        toast.addEventListener('animationend', () => toast.remove());
+    }, duration);
+}
+
+/* ─── Password Toggle ─── */
+const pwField  = document.getElementById('password');
+const pwToggle = document.getElementById('pwToggle');
+const eyeShow  = document.getElementById('eyeShow');
+const eyeHide  = document.getElementById('eyeHide');
+
+pwToggle.addEventListener('click', () => {
+    const isHidden = pwField.type === 'password';
+    pwField.type = isHidden ? 'text' : 'password';
+    eyeShow.style.display = isHidden ? 'none' : 'inline';
+    eyeHide.style.display = isHidden ? 'inline' : 'none';
+    pwToggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
+    pwToggle.setAttribute('aria-pressed', String(isHidden));
+});
+
+/* ─── Form Submission ─── */
+const loginForm = document.getElementById('loginForm');
+const submitBtn = document.getElementById('submitBtn');
+const messageEl = document.getElementById('message');
+
+function setLoading(loading) {
+    submitBtn.disabled = loading;
+    submitBtn.innerHTML = loading
+        ? '<span class="spinner" aria-hidden="true"></span>Signing in…'
+        : 'Sign In';
+}
+
+function showInlineMessage(text, type) {
+    messageEl.textContent = text;
+    messageEl.className = `visible ${type}`;
+}
+
+loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const btn = loginForm.querySelector("button[type='submit']");
-    btn.disabled = true;
-    btn.textContent = "Signing in...";
+    // Clear previous state
+    messageEl.className = '';
 
-    messageEl.className = "";
-    messageEl.style.display = "none";
+    setLoading(true);
 
     const formData = new FormData(loginForm);
 
     try {
-        const response = await fetch("/login", { method: "POST", body: formData });
+        const response = await fetch('/login', { method: 'POST', body: formData });
         const data = await response.json();
 
-        messageEl.style.display = "block";
-        messageEl.textContent = data.message;
-
         if (data.success) {
-            messageEl.style.background = "rgba(34, 197, 94, 0.1)";
-            messageEl.style.color = "#22C55E";
-            messageEl.style.border = "1px solid rgba(34, 197, 94, 0.2)";
-            localStorage.setItem("token", data.token);
-            setTimeout(() => window.location.href = "/dashboard", 600);
+            localStorage.setItem('token', data.token);
+            showToast('Signed in successfully! Redirecting…', 'success');
+            setTimeout(() => window.location.href = '/dashboard', 700);
         } else {
-            messageEl.style.background = "rgba(239, 68, 68, 0.1)";
-            messageEl.style.color = "#EF4444";
-            messageEl.style.border = "1px solid rgba(239, 68, 68, 0.2)";
-            btn.disabled = false;
-            btn.textContent = "Sign In";
+            // Friendly error messages
+            const msg = data.message || 'Incorrect email or password. Please try again.';
+            showInlineMessage(msg, 'error');
+            showToast(msg, 'error');
+            setLoading(false);
         }
     } catch {
-        messageEl.style.display = "block";
-        messageEl.textContent = "Connection error. Please try again.";
-        messageEl.style.background = "rgba(239, 68, 68, 0.1)";
-        messageEl.style.color = "#EF4444";
-        messageEl.style.border = "1px solid rgba(239, 68, 68, 0.2)";
-        btn.disabled = false;
-        btn.textContent = "Sign In";
+        const msg = 'Connection problem. Check your internet and try again.';
+        showInlineMessage(msg, 'error');
+        showToast(msg, 'error');
+        setLoading(false);
     }
 });
 </script>
