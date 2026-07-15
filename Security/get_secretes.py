@@ -5,10 +5,10 @@ import requests
 from functools import lru_cache
 from dotenv import load_dotenv
 
-# -----------------------------
-# Load local env (ONLY for DOPPLER_TOKEN fallback)
-# -----------------------------
 load_dotenv()
+
+if os.path.exists("/app/.env"):
+    load_dotenv("/app/.env", override=True)
 
 DOPPLER_TOKEN = os.getenv("DOPPLER_TOKEN")
 project = os.getenv("DOPPLER_PROJECT")
@@ -124,3 +124,6 @@ def get_secret_json(key: str) -> dict:
     except Exception as e:
         logging.error(f"get_secret_json error: {e}")
         return None
+    
+if __name__ == "__main__":
+    print(load_env_from_secret("DATABASE_URL"))

@@ -11,16 +11,16 @@
             theme: {
                 extend: {
                     colors: {
-                        bgMain:          '#0B1020',
-                        bgSurface:       '#12182B',
-                        bgElevated:      '#182033',
-                        borderCol:       '#243047',
-                        accent:          '#3BC9DB',
-                        accentSecondary: '#5B7CFA',
-                        textPrimary:     '#F3F7FF',
-                        textSecondary:   '#94A3B8',
-                        textMuted:       '#5a6a85',
-                        success:         '#22C55E',
+                        bgMain:          '#FAFAFA',
+                        bgSurface:       '#FFFFFF',
+                        bgElevated:      '#F5F5F5',
+                        borderCol:       '#E5E7EB',
+                        accent:          '#2563EB',
+                        accentSecondary: '#1D4ED8',
+                        textPrimary:     '#1F2937',
+                        textSecondary:   '#6B7280',
+                        textMuted:       '#6B7280',
+                        success:         '#10B981',
                         error:           '#EF4444',
                         warning:         '#F59E0B',
                     }
@@ -32,18 +32,18 @@
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'DM Sans', sans-serif; background-color: #0B1020; color: #F3F7FF; -webkit-font-smoothing: antialiased; }
+        body { font-family: 'DM Sans', sans-serif; background-color: #FAFAFA; color: #1F2937; -webkit-font-smoothing: antialiased; }
 
         /* ─── Scrollbar ─── */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0B1020; }
-        ::-webkit-scrollbar-thumb { background: #243047; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #FAFAFA; }
+        ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 3px; }
 
         /* ─── Nav Active ─── */
         .nav-active {
-            background-color: rgba(59,201,219,0.08) !important;
-            color: #3BC9DB !important;
-            border-left: 3px solid #3BC9DB;
+            background-color: rgba(37,99,235,0.08) !important;
+            color: #2563EB !important;
+            border-left: 3px solid #2563EB;
         }
         .nav-item { border-left: 3px solid transparent; }
 
@@ -59,7 +59,7 @@
 
         /* ─── Skeleton Loader ─── */
         .skeleton {
-            background: linear-gradient(90deg, #182033 25%, #243047 50%, #182033 75%);
+            background: linear-gradient(90deg, #F5F5F5 25%, #E5E7EB 50%, #F5F5F5 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
             border-radius: 6px;
@@ -82,13 +82,13 @@
         }
 
         .toast {
-            background: #182033;
-            border: 1px solid #243047;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
             border-radius: 12px;
             padding: 12px 16px;
             min-width: 260px; max-width: 340px;
             display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 30px rgba(31,41,55,0.12);
             animation: toastIn 0.3s cubic-bezier(0.16,1,0.3,1);
             pointer-events: all;
             font-size: 13.5px; font-weight: 500;
@@ -100,27 +100,27 @@
         @keyframes toastOut { from { opacity:1; transform:translateY(0); }    to { opacity:0; transform:translateY(12px); } }
 
         .toast-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
-        .toast.success .toast-dot { background: #22C55E; }
+        .toast.success .toast-dot { background: #10B981; }
         .toast.error   .toast-dot { background: #EF4444; }
-        .toast.info    .toast-dot { background: #3BC9DB; }
+        .toast.info    .toast-dot { background: #2563EB; }
 
         /* ─── Dropzone drag state ─── */
         #dropzone.drag-over {
-            border-color: #3BC9DB;
-            background: rgba(59,201,219,0.05);
+            border-color: #2563EB;
+            background: rgba(37,99,235,0.05);
         }
 
         /* ─── File preview list ─── */
         .file-chip {
             display: flex; align-items: center; gap: 8px;
-            background: #182033; border: 1px solid #243047;
+            background: #F5F5F5; border: 1px solid #E5E7EB;
             border-radius: 8px; padding: 8px 12px;
             font-size: 12px;
         }
 
         .file-chip-remove {
             margin-left: auto;
-            color: #5a6a85;
+            color: #6B7280;
             cursor: pointer;
             padding: 2px;
             border-radius: 4px;
@@ -134,41 +134,41 @@
         /* ─── Upload progress bar ─── */
         .progress-bar-track {
             width: 100%; height: 4px;
-            background: #243047; border-radius: 2px; overflow: hidden;
+            background: #E5E7EB; border-radius: 2px; overflow: hidden;
         }
 
         .progress-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #3BC9DB, #5B7CFA);
+            background: linear-gradient(90deg, #2563EB, #1D4ED8);
             border-radius: 2px;
             transition: width 0.3s ease;
             width: 0%;
         }
 
         /* ─── Table search highlight ─── */
-        mark { background: rgba(59,201,219,0.2); color: #3BC9DB; border-radius: 2px; }
+        mark { background: rgba(37,99,235,0.15); color: #2563EB; border-radius: 2px; }
 
         /* ─── Copy token button ─── */
         #copyTokenBtn {
             margin-top: 8px;
             display: inline-flex; align-items: center; gap: 6px;
-            background: #182033; border: 1px solid #243047;
-            color: #94A3B8; font-size: 12px; font-weight: 500;
+            background: #F5F5F5; border: 1px solid #E5E7EB;
+            color: #6B7280; font-size: 12px; font-weight: 500;
             padding: 6px 12px; border-radius: 7px; cursor: pointer;
             transition: border-color 0.15s, color 0.15s;
             font-family: 'DM Sans', sans-serif;
         }
-        #copyTokenBtn:hover { border-color: #3BC9DB; color: #3BC9DB; }
+        #copyTokenBtn:hover { border-color: #2563EB; color: #2563EB; }
 
         /* ─── Reduced motion ─── */
         @media (prefers-reduced-motion: reduce) {
-            .skeleton { animation: none; background: #182033; }
+            .skeleton { animation: none; background: #F5F5F5; }
             .toast { animation: none; }
             * { transition-duration: 0.01ms !important; }
         }
 
         /* ─── Focus ring ─── */
-        :focus-visible { outline: 2px solid #3BC9DB; outline-offset: 2px; border-radius: 4px; }
+        :focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; border-radius: 4px; }
         :focus:not(:focus-visible) { outline: none; }
 
         /* ─── Mobile table scroll indicator ─── */
@@ -181,17 +181,17 @@
         #confirmDialog {
             display: none;
             position: fixed; inset: 0;
-            background: rgba(0,0,0,0.6);
+            background: rgba(31,41,55,0.45);
             backdrop-filter: blur(4px);
             z-index: 9998;
             align-items: center; justify-content: center;
         }
         #confirmDialog.visible { display: flex; }
         #confirmBox {
-            background: #12182B; border: 1px solid #243047;
+            background: #FFFFFF; border: 1px solid #E5E7EB;
             border-radius: 16px; padding: 28px 24px;
             max-width: 360px; width: calc(100% - 32px);
-            box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+            box-shadow: 0 24px 64px rgba(31,41,55,0.18);
         }
     </style>
 </head>

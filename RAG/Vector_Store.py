@@ -173,7 +173,9 @@ class VectorStore:
 Vector = VectorStore()
 
 if __name__ == "__main__":
+    import asyncio
+    async def main():
+        results = await Vector.search_vector("What is Inventory Pro", 3)
 
-    results = Vector.delete_vectors_by_document_id(document_id=21, user_id=3)
-
-    print(results)
+        print(results)
+    asyncio.run(main())
