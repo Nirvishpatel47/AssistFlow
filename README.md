@@ -12,7 +12,7 @@
 
 ---
 
-Test: ![https://assistflow-878105927758.asia-south1.run.app]
+[Test here!](https://assistflow-878105927758.asia-south1.run.app)
 
 ## Overview
 
